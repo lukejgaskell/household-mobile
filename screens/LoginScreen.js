@@ -17,7 +17,6 @@ export default function LoginScreen({ navigation }) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
-        <Text style={styles.householdText}>Household</Text>
         <View style={styles.welcomeContainer}>
           <LoginImage />
           <Text style={styles.welcomeText}>Welcome</Text>
@@ -42,7 +41,7 @@ export default function LoginScreen({ navigation }) {
 }
 
 LoginScreen.navigationOptions = {
-  FindOrCreate: "FindOrCreate"
+  title: "Household"
 };
 
 const styles = StyleSheet.create({
@@ -50,9 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff"
   },
-  contentContainer: {
-    paddingTop: 30
-  },
+  contentContainer: {},
   welcomeImage: {
     width: 100,
     height: 80,
@@ -65,26 +62,13 @@ const styles = StyleSheet.create({
     marginTop: "30%",
     marginBottom: 20
   },
-  householdText: {
-    width: 99,
-    height: 22,
-    // fontFamily: "Souliyo Unicode",
-    left: 23,
-    top: 14,
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 16,
-    lineHeight: 22,
-    letterSpacing: 0.13,
-    color: "#0083FF"
-  },
   welcomeText: {
     color: "#6C63FF",
     lineHeight: 37,
     marginTop: 30,
     // fontFamily: "Roboto",
     fontStyle: "normal",
-    fontWeight: "900",
+    fontWeight: "800",
     fontSize: 32
   },
   loginButton: {

@@ -9,25 +9,30 @@ import {
 import FindHouseholdImage from "../assets/images/find-household-icon.svg";
 import CreateHouseholdImage from "../assets/images/create-household-icon.svg";
 
-export default function FindOrCreate() {
+export default function FindOrCreate({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
-        <Text style={styles.householdText}>Household</Text>
         <View style={styles.imageGrouping}>
           <FindHouseholdImage />
-          <TouchableOpacity onPress={() => true} style={styles.button}>
-            <Text style={styles.loginText}>Find a household</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("JoinHousehold")}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Find a household</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.orText}>or</Text>
         <View style={styles.imageGrouping}>
           <CreateHouseholdImage />
-          <TouchableOpacity onPress={() => true} style={styles.button}>
-            <Text style={styles.loginText}>Create a household</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CreateHousehold")}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Create a household</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -36,7 +41,8 @@ export default function FindOrCreate() {
 }
 
 FindOrCreate.navigationOptions = {
-  header: null
+  title: "Household",
+  headerLeft: null
 };
 
 const styles = StyleSheet.create({
@@ -44,9 +50,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff"
   },
-  contentContainer: {
-    paddingTop: 30
-  },
+  contentContainer: {},
   welcomeImage: {
     width: 100,
     height: 80,
@@ -59,19 +63,6 @@ const styles = StyleSheet.create({
     marginTop: "10%",
     marginBottom: "10%",
     marginBottom: 20
-  },
-  householdText: {
-    width: 99,
-    height: 22,
-    // fontFamily: "Souliyo Unicode",
-    left: 23,
-    top: 14,
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 16,
-    lineHeight: 22,
-    letterSpacing: 0.13,
-    color: "#0083FF"
   },
   button: {
     // border: "1px solid #6C63FF",
@@ -88,7 +79,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 47
   },
-  loginText: {
+  buttonText: {
     // fontFamily: 'Roboto',
     fontStyle: "normal",
     fontWeight: "normal",
