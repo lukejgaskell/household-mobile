@@ -9,9 +9,10 @@ import {
 } from "react-native";
 import ChoresImage from "../assets/images/chores-icon.svg";
 
-export default function AddChores({ navigation }) {
-  const [name, setName] = useState("");
-  const [difficulty, setDifficulty] = useState(null);
+export default function EditChores({ navigation }) {
+  const chore = navigation.getParam("chore", {});
+  const [name, setName] = useState(chore.name);
+  const [difficulty, setDifficulty] = useState(chore.difficulty);
 
   function getButtons() {
     let buttons = [];
@@ -47,11 +48,7 @@ export default function AddChores({ navigation }) {
       >
         <View style={styles.imageGrouping}>
           <ChoresImage />
-          <Text style={styles.welcomeText}>Add Chores</Text>
-          <Text style={styles.text}>
-            Add your household chores to receive points for every household task
-            that is completed.
-          </Text>
+          <Text style={styles.welcomeText}>Edit Chore</Text>
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -66,9 +63,15 @@ export default function AddChores({ navigation }) {
           <View style={styles.row}>{getButtons()}</View>
           <TouchableOpacity
             onPress={() => navigation.navigate("ViewChores")}
-            style={styles.button}
+            style={styles.saveButton}
           >
-            <Text style={styles.buttonText}>Add</Text>
+            <Text style={styles.saveButtonText}>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ViewChores")}
+            style={styles.deleteButton}
+          >
+            <Text style={styles.deleteButtonText}>Delete Chore</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -76,7 +79,7 @@ export default function AddChores({ navigation }) {
   );
 }
 
-AddChores.navigationOptions = {
+EditChores.navigationOptions = {
   title: "Household"
 };
 
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
     marginBottom: "10%",
     marginBottom: 20
   },
-  button: {
+  saveButton: {
     // border: "1px solid #6C63FF",
     // boxSizing: "border-box",
     borderStyle: "solid",
@@ -138,15 +141,27 @@ const styles = StyleSheet.create({
     width: "40%",
     justifyContent: "center",
     flexDirection: "row",
-    height: 47
+    height: 47,
+    backgroundColor: "#6C63FF"
   },
-  buttonText: {
+  saveButtonText: {
     // fontFamily: 'Roboto',
     fontStyle: "normal",
     fontWeight: "normal",
     fontSize: 16,
     lineHeight: 19,
-    color: "#6C63FF"
+    color: "#FFFFFF"
+  },
+  deleteButton: {
+    marginTop: 30,
+    padding: 10
+  },
+  deleteButtonText: {
+    fontStyle: "normal",
+    fontWeight: "normal",
+    fontSize: 12,
+    lineHeight: 14,
+    color: "#FF0000"
   },
   text: {
     // fontFamily: 'Roboto',

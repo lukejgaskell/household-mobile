@@ -7,6 +7,10 @@ import LoginScreen from "../screens/LoginScreen";
 import JoinHousehold from "../screens/JoinHousehold";
 import CreateHousehold from "../screens/CreateHousehold";
 import AddChores from "../screens/AddChores";
+import ViewChores from "../screens/ViewChores";
+import EditChores from "../screens/EditChores";
+import InviteRoomates from "../screens/InviteRoomates";
+import ViewHousehold from "../screens/ViewHousehold";
 
 const config = Platform.select({
   web: { headerMode: "screen" },
@@ -19,7 +23,11 @@ const WelcomeStack = createStackNavigator(
     FindOrCreate: FindOrCreate,
     JoinHousehold: JoinHousehold,
     CreateHousehold: CreateHousehold,
-    AddChores: AddChores
+    AddChores: AddChores,
+    ViewChores: ViewChores,
+    EditChores: EditChores,
+    InviteRoomates: InviteRoomates,
+    ViewHousehold: ViewHousehold
   },
   config
 );
