@@ -70,7 +70,7 @@ export default function ViewHousehold({ navigation }) {
             )}
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("InviteRoomates")}
+            onPress={() => navigation.navigate("RecordAChore")}
             style={styles.button}
           >
             <Text style={styles.buttonText}>Record Chore</Text>

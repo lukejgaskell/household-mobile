@@ -11,6 +11,7 @@ import ViewChores from "../screens/ViewChores";
 import EditChores from "../screens/EditChores";
 import InviteRoomates from "../screens/InviteRoomates";
 import ViewHousehold from "../screens/ViewHousehold";
+import RecordAChore from "../screens/RecordAChore";
 
 const config = Platform.select({
   web: { headerMode: "screen" },
@@ -27,7 +28,8 @@ const WelcomeStack = createStackNavigator(
     ViewChores: ViewChores,
     EditChores: EditChores,
     InviteRoomates: InviteRoomates,
-    ViewHousehold: ViewHousehold
+    ViewHousehold: ViewHousehold,
+    RecordAChore: RecordAChore
   },
   config
 );
