@@ -9,58 +9,102 @@ import {
 import HouseImage from "../assets/images/chores-icon.svg";
 import { membersStub } from "../stubs/members";
 import { choreFeedStub } from "../stubs/choreFeed";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ViewHousehold({ navigation }) {
   const [name, setName] = useState("Lorem's house");
   const [members, setMembers] = useState(membersStub);
   const [chores, setChores] = useState(choreFeedStub);
+  const [selectedMember, setSelectedMember] = useState(null);
 
   function getMembers() {
     return members.map((member, index) => {
       return (
-        <View key={index} style={styles.persona}>
-          <Text style={styles.personaText}>{member.initials}</Text>
-          {member.isActive && (
-            <View style={styles.choreCounter}>
-              <Text style={styles.choreCounterText}>{member.score}</Text>
-            </View>
-          )}
-          {!member.isActive && <Text style={styles.pendingText}>Pending</Text>}
-        </View>
+        <TouchableOpacity
+          key={index}
+          onPress={() =>
+            setSelectedMember(selectedMember?.id !== member.id ? member : null)
+          }
+        >
+          <View
+            style={
+              selectedMember?.id !== member.id
+                ? styles.persona
+                : styles.selectedPersona
+            }
+          >
+            <Text
+              style={
+                selectedMember?.id !== member.id
+                  ? styles.personaText
+                  : styles.selectedPesonaText
+              }
+            >
+              {member.initials}
+            </Text>
+            {member.isActive && (
+              <View style={styles.choreCounter}>
+                <Text style={styles.choreCounterText}>{member.score}</Text>
+              </View>
+            )}
+            {!member.isActive && (
+              <Text style={styles.pendingText}>Pending</Text>
+            )}
+          </View>
+        </TouchableOpacity>
       );
     });
   }
   function getChoreFeed() {
-    return chores.map((chore, index) => {
-      return (
-        <View key={index} style={styles.card}>
-          <View style={styles.chorePointValue}>
-            <Text style={styles.chorePointValueText}>{"+" + chore.points}</Text>
-          </View>
-          <View style={styles.choreDescription}>
-            <View style={styles.row}>
-              <Text style={styles.completedBy}>{chore.completedBy}</Text>
-              <Text>{" completed"}</Text>
+    return chores
+      .filter(
+        c => selectedMember === null || c.completedById === selectedMember.id
+      )
+      .map((chore, index) => {
+        return (
+          <View key={index} style={styles.card}>
+            <View style={styles.chorePointValue}>
+              <Text style={styles.chorePointValueText}>
+                {"+" + chore.points}
+              </Text>
             </View>
-            <Text style={styles.choreName}>{chore.name}</Text>
+            <View style={styles.choreDescription}>
+              <View style={styles.row}>
+                <Text style={styles.completedBy}>{chore.completedBy}</Text>
+                <Text>{" completed"}</Text>
+              </View>
+              <Text style={styles.choreName}>{chore.name}</Text>
+            </View>
+            <Text style={styles.choreDate}>{chore.completedDate}</Text>
           </View>
-          <Text style={styles.choreDate}>{chore.completedDate}</Text>
-        </View>
-      );
-    });
+        );
+      });
   }
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.imageGrouping}>
-          <HouseImage />
-          <Text style={styles.welcomeText}>{name}</Text>
-          <View style={styles.members}>{getMembers()}</View>
-          <View style={styles.chores}>
+      <View style={styles.imageGrouping}>
+        {selectedMember !== null ? (
+          <>
+            <View style={styles.bigPersona}>
+              <Text style={styles.bigPersonaText}>
+                {selectedMember?.initials}
+              </Text>
+            </View>
+            <Text style={styles.welcomeText}>{selectedMember?.name}</Text>
+            <Text style={styles.pointsText}>
+              {selectedMember?.score + " Points"}
+            </Text>
+          </>
+        ) : (
+          <>
+            <HouseImage />
+            <Text style={styles.welcomeText}>{name}</Text>
+          </>
+        )}
+        <View style={styles.members}>{getMembers()}</View>
+        <View style={styles.chores}>
+          <ScrollView>
             {chores.length > 0 ? (
               getChoreFeed()
             ) : (
@@ -68,22 +112,31 @@ export default function ViewHousehold({ navigation }) {
                 {"No chores recorded yet"}
               </Text>
             )}
-          </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("RecordAChore")}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Record Chore</Text>
-          </TouchableOpacity>
+          </ScrollView>
         </View>
-      </ScrollView>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RecordAChore")}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Record Chore</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
-ViewHousehold.navigationOptions = {
-  title: "Household"
-};
+ViewHousehold.navigationOptions = ({ navigation }) => ({
+  title: "Household",
+  headerLeft: null,
+  headerRight: (
+    <TouchableOpacity
+      style={styles.gearIcon}
+      onPress={() => navigation.navigate("Settings")}
+    >
+      <Ionicons name="ios-cog" size={32} color="black" />
+    </TouchableOpacity>
+  )
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -97,10 +150,20 @@ const styles = StyleSheet.create({
     color: "#6C63FF",
     lineHeight: 37,
     marginTop: 30,
-    // fontFamily: "Roboto",
     fontStyle: "normal",
     fontWeight: "800",
     fontSize: 32
+  },
+  pointsText: {
+    color: "#6C63FF",
+    lineHeight: 22,
+    marginTop: 20,
+    marginBottom: 15,
+    fontStyle: "normal",
+    fontSize: 16
+  },
+  gearIcon: {
+    marginRight: 20
   },
   card: {
     shadowColor: "#000000",
@@ -152,6 +215,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#E7E7E7"
   },
+  selectedPersona: {
+    borderRadius: 56,
+    width: 56,
+    height: 56,
+    marginLeft: 15,
+    marginRight: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#B4B0FB"
+  },
+  bigPersona: {
+    borderRadius: 112,
+    width: 112,
+    height: 112,
+    marginTop: 21,
+    marginLeft: 15,
+    marginRight: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#B4B0FB"
+  },
   choreCounter: {
     position: "absolute",
     borderStyle: "solid",
@@ -173,6 +257,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 32,
     color: "#3F3D56"
+  },
+  selectedPesonaText: {
+    fontSize: 24,
+    lineHeight: 32,
+    color: "#FFFFFF"
+  },
+  bigPersonaText: {
+    fontSize: 48,
+    lineHeight: 58,
+    color: "#FFFFFF"
   },
   button: {
     borderStyle: "solid",

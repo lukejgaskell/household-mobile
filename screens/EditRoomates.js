@@ -1,32 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
   Text,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  TextInput
 } from "react-native";
-import ChoresImage from "../assets/images/chores-icon.svg";
-import { chores } from "../stubs/chores";
+import InviteRoomatesImage from "../assets/images/invite-roomates-icon.svg";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function EditChores({ navigation }) {
-  function getChores() {
+export default function EditRoomates({ navigation }) {
+  const [emails, setEmails] = useState([
+    "jerryjones@gmail.com",
+    "ryanleaf@gmail.com"
+  ]);
+  const [newEmails, setNewEmails] = useState([""]);
+
+  function getEmails() {
     let items = [];
-    chores.forEach((chore, index) => {
+    emails.forEach((email, index) => {
       items.push(
-        <TouchableOpacity
-          onPress={() => navigation.navigate("EditChore", { chore })}
-          style={styles.choreButton}
-          key={index}
-        >
-          <Text style={styles.choreButtonText}>{chore.name}</Text>
-          <View style={styles.roundButtonSelected}>
-            <Text style={styles.roundButtonTextSelected}>
-              {chore.difficulty}
-            </Text>
-          </View>
-        </TouchableOpacity>
+        <View style={styles.emailWrapper} key={"o" + index}>
+          <Text style={styles.emailText}>{email}</Text>
+          <TouchableOpacity>
+            <Ionicons name="ios-close" size={32} color="red" />
+          </TouchableOpacity>
+        </View>
+      );
+    });
+    newEmails.forEach((email, index) => {
+      items.push(
+        <View style={styles.inputWrapper} key={"n" + index}>
+          <TextInput
+            style={styles.input}
+            onChangeText={text => {
+              const newEmails = [...emails];
+              newEmails[index] = text;
+              setEmails(newEmails);
+            }}
+            placeholder="Enter Email Address"
+            value={email}
+          />
+        </View>
       );
     });
     return items;
@@ -39,13 +55,19 @@ export default function EditChores({ navigation }) {
         contentContainerStyle={styles.contentContainer}
       >
         <View style={styles.imageGrouping}>
-          <Text style={styles.welcomeText}>Edit Chores</Text>
-          <View style={styles.chores}>{getChores()}</View>
+          <Text style={styles.welcomeText}>Edit Roomates</Text>
+          <View style={styles.chores}>{getEmails()}</View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("AddChores")}
+            onPress={() => setNewEmails([...newEmails, ""])}
             style={styles.addButton}
           >
             <Ionicons name="ios-add" size={32} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ViewHousehold")}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Invite</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -53,7 +75,7 @@ export default function EditChores({ navigation }) {
   );
 }
 
-EditChores.navigationOptions = {
+EditRoomates.navigationOptions = {
   title: "Household"
 };
 
@@ -113,37 +135,44 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     width: "80%"
   },
-  choreButton: {
+  input: {
+    paddingTop: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
+    paddingLeft: 0,
+    backgroundColor: "#fff",
+    color: "#424242"
+  },
+  inputWrapper: {
     borderStyle: "solid",
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: "#AFAFAF",
     borderRadius: 8,
-    width: 325,
-    height: 50,
     marginTop: 8,
     marginBottom: 8,
     paddingLeft: 8,
     paddingRight: 8,
+    textAlign: "center",
+    flexDirection: "row",
+    width: 325,
+    height: 50
+  },
+  emailWrapper: {
+    backgroundColor: "#F4F4F4",
+    borderRadius: 8,
+    marginTop: 8,
+    marginBottom: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
+    textAlign: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between"
+    width: 325,
+    height: 50
   },
-  choreButtonText: {
+  emailText: {
     color: "#7C7C7C"
-  },
-  roundButtonSelected: {
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#6C63FF",
-    borderRadius: 42,
-    width: 42,
-    height: 42,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#6C63FF"
-  },
-  roundButtonTextSelected: {
-    color: "#FFFFFF"
   },
   addButton: {
     borderStyle: "solid",

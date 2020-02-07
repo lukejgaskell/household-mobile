@@ -13,29 +13,24 @@ import FacebookLogo from "../assets/images/facebook-icon.svg";
 export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
+      <View style={styles.welcomeContainer}>
+        <LoginImage />
+        <Text style={styles.welcomeText}>Welcome</Text>
+      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("FindOrCreate")}
+        style={styles.loginButton}
       >
-        <View style={styles.welcomeContainer}>
-          <LoginImage />
-          <Text style={styles.welcomeText}>Welcome</Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("FindOrCreate")}
-          style={styles.loginButton}
-        >
-          <GoogleLogo />
-          <Text style={styles.loginText}>Login With Google</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("FindOrCreate")}
-          style={styles.loginButton}
-        >
-          <FacebookLogo style={styles.facebookLogo} />
-          <Text style={styles.loginText}>Login With Facebook</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        <GoogleLogo />
+        <Text style={styles.loginText}>Login With Google</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("FindOrCreate")}
+        style={styles.loginButton}
+      >
+        <FacebookLogo style={styles.facebookLogo} />
+        <Text style={styles.loginText}>Login With Facebook</Text>
+      </TouchableOpacity>
     </View>
   );
 }

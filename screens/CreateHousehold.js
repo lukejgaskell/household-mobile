@@ -14,33 +14,28 @@ export default function CreateHousehold({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.imageGrouping}>
-          <CreateHouseholdImage />
-          <Text style={styles.welcomeText}>Create Household</Text>
-          <Text style={styles.text}>
-            Create a household to begin tracking chores and make your house work
-            fun!
-          </Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              onChangeText={text => setName(text)}
-              placeholder="Household Name"
-              value={name}
-            />
-          </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("AddChores")}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
+      <View style={styles.imageGrouping}>
+        <CreateHouseholdImage />
+        <Text style={styles.welcomeText}>Create Household</Text>
+        <Text style={styles.text}>
+          Create a household to begin tracking chores and make your house work
+          fun!
+        </Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            onChangeText={text => setName(text)}
+            placeholder="Household Name"
+            value={name}
+          />
         </View>
-      </ScrollView>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AddChores")}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -64,12 +59,8 @@ const styles = StyleSheet.create({
     color: "#424242"
   },
   inputWrapper: {
-    flex: 1,
     marginTop: 20,
     marginBottom: 20,
-    textAlign: "center",
-    flexDirection: "row",
-    backgroundColor: "#fff",
     width: "80%",
     borderBottomColor: "#C7C7C7",
     borderBottomWidth: 1

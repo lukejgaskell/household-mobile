@@ -1,41 +1,30 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import FindHouseholdImage from "../assets/images/find-household-icon.svg";
 import CreateHouseholdImage from "../assets/images/create-household-icon.svg";
 
 export default function FindOrCreate({ navigation }) {
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.imageGrouping}>
-          <FindHouseholdImage />
-          <TouchableOpacity
-            onPress={() => navigation.navigate("JoinHousehold")}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Find a household</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.orText}>or</Text>
-        <View style={styles.imageGrouping}>
-          <CreateHouseholdImage />
-          <TouchableOpacity
-            onPress={() => navigation.navigate("CreateHousehold")}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Create a household</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+      <View style={styles.imageGrouping}>
+        <FindHouseholdImage />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("JoinHousehold")}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Find a household</Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.orText}>or</Text>
+      <View style={styles.imageGrouping}>
+        <CreateHouseholdImage />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("CreateHousehold")}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Create a household</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

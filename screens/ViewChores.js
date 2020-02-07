@@ -16,7 +16,7 @@ export default function ViewChores({ navigation }) {
     chores.forEach((chore, index) => {
       items.push(
         <TouchableOpacity
-          onPress={() => navigation.navigate("EditChores", { chore })}
+          onPress={() => navigation.navigate("EditChore", { chore })}
           style={styles.choreButton}
           key={index}
         >

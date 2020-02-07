@@ -14,38 +14,33 @@ export default function JoinHousehold() {
   const [showMessage, setShowMessage] = useState(false);
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.imageGrouping}>
-          <FindHouseholdImage />
-          <Text style={styles.welcomeText}>Join Household</Text>
-          <Text style={styles.text}>Enter Household Admin's Email Address</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              onChangeText={text => setEmail(text)}
-              placeholder="Email Address"
-              value={email}
-            />
-          </View>
-          {!showMessage && (
-            <TouchableOpacity
-              onPress={() => setShowMessage(true)}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>Join Household</Text>
-            </TouchableOpacity>
-          )}
-          {showMessage && (
-            <Text style={styles.messageText}>
-              This Household admin will approve you soon. You will be notified
-              via email.
-            </Text>
-          )}
+      <View style={styles.imageGrouping}>
+        <FindHouseholdImage />
+        <Text style={styles.welcomeText}>Join Household</Text>
+        <Text style={styles.text}>Enter Household Admin's Email Address</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            onChangeText={text => setEmail(text)}
+            placeholder="Email Address"
+            value={email}
+          />
         </View>
-      </ScrollView>
+        {!showMessage && (
+          <TouchableOpacity
+            onPress={() => setShowMessage(true)}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Join Household</Text>
+          </TouchableOpacity>
+        )}
+        {showMessage && (
+          <Text style={styles.messageText}>
+            This Household admin will approve you soon. You will be notified via
+            email.
+          </Text>
+        )}
+      </View>
     </View>
   );
 }
@@ -69,12 +64,8 @@ const styles = StyleSheet.create({
     color: "#424242"
   },
   inputWrapper: {
-    flex: 1,
     marginTop: 20,
     marginBottom: 20,
-    textAlign: "center",
-    flexDirection: "row",
-    backgroundColor: "#fff",
     width: "80%",
     borderBottomColor: "#C7C7C7",
     borderBottomWidth: 1
