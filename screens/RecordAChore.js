@@ -6,19 +6,32 @@ import {
   ScrollView,
   TouchableOpacity
 } from "react-native";
-import { chores } from "../stubs/chores";
+import { addActivity } from "../state/redux";
+import { getCurrentDate } from "../services/utils";
+import { connect } from "react-redux";
 
-export default function RecordAChore({ navigation }) {
+function RecordAChoreC({ navigation, chores, addActivity, currentUser }) {
   const [selectedChore, setSelectedChore] = useState(null);
+
+  function submit() {
+    addActivity({
+      name: selectedChore?.name,
+      points: selectedChore?.difficulty,
+      completedById: currentUser?.id,
+      completedBy: currentUser?.name,
+      completedDate: getCurrentDate()
+    });
+    navigation.navigate("ViewHousehold");
+  }
 
   function getChores() {
     let items = [];
     chores.forEach((chore, index) => {
       items.push(
         <TouchableOpacity
-          onPress={() => setSelectedChore(index)}
+          onPress={() => setSelectedChore(chore)}
           style={
-            selectedChore === index
+            selectedChore?.id === chore.id
               ? styles.choreButtonSelected
               : styles.choreButton
           }
@@ -26,7 +39,7 @@ export default function RecordAChore({ navigation }) {
         >
           <Text
             style={
-              selectedChore === index
+              selectedChore?.id === chore.id
                 ? styles.choreButtonTextSelected
                 : styles.choreButtonText
             }
@@ -35,14 +48,14 @@ export default function RecordAChore({ navigation }) {
           </Text>
           <View
             style={
-              selectedChore === index
+              selectedChore?.id === chore.id
                 ? styles.roundButtonSelected
                 : styles.roundButton
             }
           >
             <Text
               style={
-                selectedChore === index
+                selectedChore?.id === chore.id
                   ? styles.roundButtonTextSelected
                   : styles.roundButtonText
               }
@@ -66,10 +79,7 @@ export default function RecordAChore({ navigation }) {
           <Text style={styles.welcomeText}>Record a chore</Text>
           <View style={styles.chores}>{getChores()}</View>
           {selectedChore !== null ? (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ViewHousehold")}
-              style={styles.button}
-            >
+            <TouchableOpacity onPress={() => submit()} style={styles.button}>
               <Text style={styles.buttonText}>Complete</Text>
             </TouchableOpacity>
           ) : null}
@@ -79,7 +89,7 @@ export default function RecordAChore({ navigation }) {
   );
 }
 
-RecordAChore.navigationOptions = {
+RecordAChoreC.navigationOptions = {
   title: "Household"
 };
 
@@ -233,3 +243,18 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
+function mapStateToProps(state) {
+  const { chores, currentUser } = state;
+
+  return { chores, currentUser };
+}
+
+const mapDispatchToProps = {
+  addActivity
+};
+
+export default RecordAChore = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RecordAChoreC);

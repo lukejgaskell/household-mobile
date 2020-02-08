@@ -9,9 +9,23 @@ import {
 } from "react-native";
 import InviteRoomatesImage from "../assets/images/invite-roomates-icon.svg";
 import { Ionicons } from "@expo/vector-icons";
+import { connect } from "react-redux";
+import { addMembers } from "../state/redux";
 
-export default function InviteRoomates({ navigation }) {
-  const [emails, setEmails] = useState(["", "", ""]);
+function InviteRoomatesC({ navigation, addMembers }) {
+  const [emails, setEmails] = useState([""]);
+
+  function submit() {
+    emails.forEach(email => {
+      addMembers({
+        email: email,
+        name: email,
+        initials: email.length > 1 ? email.substring(0, 2) : ""
+      });
+    });
+    navigation.navigate("ViewHousehold");
+  }
+
   function getEmails() {
     let items = [];
     emails.forEach((email, index) => {
@@ -20,9 +34,8 @@ export default function InviteRoomates({ navigation }) {
           <TextInput
             style={styles.input}
             onChangeText={text => {
-              const newEmails = [...emails];
-              newEmails[index] = text;
-              setEmails(newEmails);
+              emails[index] = text;
+              setEmails([...emails]);
             }}
             placeholder="Enter Email Address"
             value={email}
@@ -44,18 +57,12 @@ export default function InviteRoomates({ navigation }) {
           <Text style={styles.welcomeText}>Invite Roomates</Text>
           <View style={styles.chores}>{getEmails()}</View>
           <TouchableOpacity
-            onPress={() => {
-              const newEmails = [...emails, ""];
-              setEmails(newEmails);
-            }}
+            onPress={() => setEmails([...emails, ""])}
             style={styles.addButton}
           >
             <Ionicons name="ios-add" size={32} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ViewHousehold")}
-            style={styles.button}
-          >
+          <TouchableOpacity onPress={() => submit()} style={styles.button}>
             <Text style={styles.buttonText}>Invite</Text>
           </TouchableOpacity>
         </View>
@@ -64,7 +71,7 @@ export default function InviteRoomates({ navigation }) {
   );
 }
 
-InviteRoomates.navigationOptions = {
+InviteRoomatesC.navigationOptions = {
   title: "Household"
 };
 
@@ -160,3 +167,16 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
+function mapStateToProps(state) {
+  return {};
+}
+
+const mapDispatchToProps = {
+  addMembers
+};
+
+export default InviteRoomates = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InviteRoomatesC);

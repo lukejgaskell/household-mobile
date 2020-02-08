@@ -7,14 +7,17 @@ import {
   TouchableOpacity
 } from "react-native";
 import HouseImage from "../assets/images/chores-icon.svg";
-import { membersStub } from "../stubs/members";
-import { choreFeedStub } from "../stubs/choreFeed";
 import { Ionicons } from "@expo/vector-icons";
+import { connect } from "react-redux";
+import { getScore } from "../services/activity";
 
-export default function ViewHousehold({ navigation }) {
-  const [name, setName] = useState("Lorem's house");
-  const [members, setMembers] = useState(membersStub);
-  const [chores, setChores] = useState(choreFeedStub);
+function ViewHouseholdC({
+  navigation,
+  householdName,
+  members,
+  activity,
+  currentUser
+}) {
   const [selectedMember, setSelectedMember] = useState(null);
 
   function getMembers() {
@@ -42,12 +45,14 @@ export default function ViewHousehold({ navigation }) {
             >
               {member.initials}
             </Text>
-            {member.isActive && (
+            {member.status === "active" && (
               <View style={styles.choreCounter}>
-                <Text style={styles.choreCounterText}>{member.score}</Text>
+                <Text style={styles.choreCounterText}>
+                  {getScore(activity, currentUser.id)}
+                </Text>
               </View>
             )}
-            {!member.isActive && (
+            {!member.status === "active" && (
               <Text style={styles.pendingText}>Pending</Text>
             )}
           </View>
@@ -56,26 +61,24 @@ export default function ViewHousehold({ navigation }) {
     });
   }
   function getChoreFeed() {
-    return chores
+    return activity
       .filter(
         c => selectedMember === null || c.completedById === selectedMember.id
       )
-      .map((chore, index) => {
+      .map((a, index) => {
         return (
           <View key={index} style={styles.card}>
             <View style={styles.chorePointValue}>
-              <Text style={styles.chorePointValueText}>
-                {"+" + chore.points}
-              </Text>
+              <Text style={styles.chorePointValueText}>{"+" + a.points}</Text>
             </View>
             <View style={styles.choreDescription}>
               <View style={styles.row}>
-                <Text style={styles.completedBy}>{chore.completedBy}</Text>
+                <Text style={styles.completedBy}>{a.completedBy}</Text>
                 <Text>{" completed"}</Text>
               </View>
-              <Text style={styles.choreName}>{chore.name}</Text>
+              <Text style={styles.choreName}>{a.name}</Text>
             </View>
-            <Text style={styles.choreDate}>{chore.completedDate}</Text>
+            <Text style={styles.choreDate}>{a.completedDate}</Text>
           </View>
         );
       });
@@ -99,13 +102,13 @@ export default function ViewHousehold({ navigation }) {
         ) : (
           <>
             <HouseImage />
-            <Text style={styles.welcomeText}>{name}</Text>
+            <Text style={styles.welcomeText}>{householdName}</Text>
           </>
         )}
         <View style={styles.members}>{getMembers()}</View>
         <View style={styles.chores}>
           <ScrollView>
-            {chores.length > 0 ? (
+            {activity.length > 0 ? (
               getChoreFeed()
             ) : (
               <Text style={styles.noChoresMessage}>
@@ -125,7 +128,7 @@ export default function ViewHousehold({ navigation }) {
   );
 }
 
-ViewHousehold.navigationOptions = ({ navigation }) => ({
+ViewHouseholdC.navigationOptions = ({ navigation }) => ({
   title: "Household",
   headerLeft: null,
   headerRight: (
@@ -347,3 +350,15 @@ const styles = StyleSheet.create({
     bottom: -20
   }
 });
+
+function mapStateToProps(state) {
+  const { activity, householdName, members, currentUser } = state;
+  return { activity, householdName, members, currentUser };
+}
+
+const mapDispatchToProps = {};
+
+export default ViewHousehold = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ViewHouseholdC);

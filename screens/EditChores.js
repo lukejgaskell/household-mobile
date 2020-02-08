@@ -6,11 +6,11 @@ import {
   ScrollView,
   TouchableOpacity
 } from "react-native";
-import ChoresImage from "../assets/images/chores-icon.svg";
-import { chores } from "../stubs/chores";
 import { Ionicons } from "@expo/vector-icons";
+import { connect } from "react-redux";
+import { addChores } from "../state/redux";
 
-export default function EditChores({ navigation }) {
+function EditChoresC({ navigation, chores, addChores }) {
   function getChores() {
     let items = [];
     chores.forEach((chore, index) => {
@@ -53,7 +53,7 @@ export default function EditChores({ navigation }) {
   );
 }
 
-EditChores.navigationOptions = {
+EditChoresC.navigationOptions = {
   title: "Household"
 };
 
@@ -159,3 +159,18 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
+function mapStateToProps(state) {
+  const { chores } = state;
+
+  return { chores };
+}
+
+const mapDispatchToProps = {
+  addChores
+};
+
+export default EditChores = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditChoresC);

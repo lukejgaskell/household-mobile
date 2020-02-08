@@ -9,25 +9,31 @@ import {
 import LoginImage from "../assets/images/login-icon.svg";
 import GoogleLogo from "../assets/images/google-icon.svg";
 import FacebookLogo from "../assets/images/facebook-icon.svg";
+import { setCurrentUser } from "../state/redux";
+import { connect } from "react-redux";
 
-export default function LoginScreen({ navigation }) {
+function LoginScreenC({ navigation, setCurrentUser }) {
+  function login() {
+    setCurrentUser({
+      name: "Me",
+      id: 0,
+      initials: "Me",
+      email: "me@gmail.com",
+      status: "active"
+    });
+    navigation.navigate("FindOrCreate");
+  }
   return (
     <View style={styles.container}>
       <View style={styles.welcomeContainer}>
         <LoginImage />
         <Text style={styles.welcomeText}>Welcome</Text>
       </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("FindOrCreate")}
-        style={styles.loginButton}
-      >
+      <TouchableOpacity onPress={() => login()} style={styles.loginButton}>
         <GoogleLogo />
         <Text style={styles.loginText}>Login With Google</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("FindOrCreate")}
-        style={styles.loginButton}
-      >
+      <TouchableOpacity onPress={() => login()} style={styles.loginButton}>
         <FacebookLogo style={styles.facebookLogo} />
         <Text style={styles.loginText}>Login With Facebook</Text>
       </TouchableOpacity>
@@ -35,7 +41,7 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
-LoginScreen.navigationOptions = {
+LoginScreenC.navigationOptions = {
   title: "Household"
 };
 
@@ -95,3 +101,14 @@ const styles = StyleSheet.create({
     marginLeft: 4
   }
 });
+
+function mapStateToProps(state) {
+  return {};
+}
+
+const mapDispatchToProps = { setCurrentUser };
+
+export default LoginScreen = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginScreenC);

@@ -3,14 +3,30 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   TextInput
 } from "react-native";
 import CreateHouseholdImage from "../assets/images/create-household-icon.svg";
+import { connect } from "react-redux";
+import { setHouseholdName, addMembers } from "../state/redux";
 
-export default function CreateHousehold({ navigation }) {
-  const [name, setName] = useState("");
+function CreateHouseholdC({
+  navigation,
+  setHouseholdName,
+  householdName,
+  addMembers,
+  currentUser
+}) {
+  function submit() {
+    addMembers({
+      name: currentUser.name,
+      email: currentUser.email,
+      id: currentUser.id,
+      initials: currentUser.initials,
+      status: currentUser.status
+    });
+    navigation.navigate("AddChores");
+  }
 
   return (
     <View style={styles.container}>
@@ -24,15 +40,12 @@ export default function CreateHousehold({ navigation }) {
         <View style={styles.inputWrapper}>
           <TextInput
             style={styles.input}
-            onChangeText={text => setName(text)}
+            onChangeText={text => setHouseholdName(text)}
             placeholder="Household Name"
-            value={name}
+            value={householdName}
           />
         </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("AddChores")}
-          style={styles.button}
-        >
+        <TouchableOpacity onPress={() => submit()} style={styles.button}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </View>
@@ -40,7 +53,7 @@ export default function CreateHousehold({ navigation }) {
   );
 }
 
-CreateHousehold.navigationOptions = {
+CreateHouseholdC.navigationOptions = {
   title: "Household"
 };
 
@@ -117,3 +130,18 @@ const styles = StyleSheet.create({
     width: "80%"
   }
 });
+
+function mapStateToProps(state) {
+  const { householdName, currentUser } = state;
+  return { householdName, currentUser };
+}
+
+const mapDispatchToProps = {
+  setHouseholdName,
+  addMembers
+};
+
+export default CreateHousehold = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CreateHouseholdC);

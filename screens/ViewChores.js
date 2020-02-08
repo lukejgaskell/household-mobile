@@ -7,10 +7,10 @@ import {
   TouchableOpacity
 } from "react-native";
 import ChoresImage from "../assets/images/chores-icon.svg";
-import { chores } from "../stubs/chores";
 import { Ionicons } from "@expo/vector-icons";
+import { connect } from "react-redux";
 
-export default function ViewChores({ navigation }) {
+function ViewChoresC({ navigation, chores }) {
   function getChores() {
     let items = [];
     chores.forEach((chore, index) => {
@@ -60,7 +60,7 @@ export default function ViewChores({ navigation }) {
   );
 }
 
-ViewChores.navigationOptions = {
+ViewChoresC.navigationOptions = {
   title: "Household"
 };
 
@@ -166,3 +166,15 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
+function mapStateToProps(state) {
+  const { chores } = state;
+  return { chores };
+}
+
+const mapDispatchToProps = {};
+
+export default ViewChores = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ViewChoresC);

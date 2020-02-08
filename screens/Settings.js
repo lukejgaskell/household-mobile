@@ -7,39 +7,41 @@ import {
   ScrollView,
   TouchableOpacity
 } from "react-native";
-import { approvalsStub } from "../stubs/approvals";
+import { connect } from "react-redux";
+import { updateMembers } from "../state/redux";
 
-export default function Settings({ navigation }) {
-  const [name, setName] = useState("Lorem's house");
-  const [approvals, setApprovals] = useState(approvalsStub);
-
+function SettingsC({ navigation, members, householdName, updateMembers }) {
   function getApprovals() {
-    return approvals.map((a, index) => (
-      <View key={index} style={styles.approvalContainer}>
-        <View style={styles.rowLeft}>
-          <View style={styles.personaLeft}>
-            <Text style={styles.personaText}>{a.initials}</Text>
+    return members
+      .filter(m => m.status === "requested")
+      .map((m, index) => (
+        <View key={index} style={styles.approvalContainer}>
+          <View style={styles.rowLeft}>
+            <View style={styles.personaLeft}>
+              <Text style={styles.personaText}>{m.initials}</Text>
+            </View>
+            <View style={styles.personaRight}>
+              <Text style={styles.text}>{m.name}</Text>
+              <Text style={styles.text}>{m.email}</Text>
+            </View>
           </View>
-          <View style={styles.personaRight}>
-            <Text style={styles.text}>{a.name}</Text>
-            <Text style={styles.text}>{a.email}</Text>
+          <View style={styles.row}>
+            <TouchableOpacity
+              onPress={() => updateMembers({ ...m, status: "active" })}
+            >
+              <Text style={styles.approveText}>Approve</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => deleteMembers(m.id)}>
+              <Text style={styles.rejectText}>Reject</Text>
+            </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.row}>
-          <TouchableOpacity>
-            <Text style={styles.approveText}>Approve</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.rejectText}>Reject</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    ));
+      ));
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>{name}</Text>
+      <Text style={styles.welcomeText}>{householdName}</Text>
       <TouchableOpacity
         onPress={() => navigation.navigate("EditChores")}
         style={styles.button}
@@ -53,12 +55,12 @@ export default function Settings({ navigation }) {
         <Text style={styles.buttonText}>Edit Roomates</Text>
       </TouchableOpacity>
       <Text style={styles.welcomeText}>{"Housemate Approval"}</Text>
-      {getApprovals()}
+      <ScrollView>{getApprovals()}</ScrollView>
     </View>
   );
 }
 
-Settings.navigationOptions = {
+SettingsC.navigationOptions = {
   title: "Household"
 };
 
@@ -140,3 +142,18 @@ const styles = StyleSheet.create({
     color: "#3F3D56"
   }
 });
+
+function mapStateToProps(state) {
+  const { members, householdName } = state;
+
+  return { members, householdName };
+}
+
+const mapDispatchToProps = {
+  updateMembers
+};
+
+export default Settings = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SettingsC);

@@ -8,11 +8,23 @@ import {
   TextInput
 } from "react-native";
 import ChoresImage from "../assets/images/chores-icon.svg";
+import { updateChores, deleteChores } from "../state/redux";
+import { connect } from "react-redux";
 
-export default function EditChore({ navigation }) {
+function EditChoreC({ navigation, chores, updateChores, deleteChores }) {
   const chore = navigation.getParam("chore", {});
   const [name, setName] = useState(chore.name);
   const [difficulty, setDifficulty] = useState(chore.difficulty);
+
+  function updatePress() {
+    updateChores({ id: chore.id, name, difficulty });
+    navigation.navigate("ViewChores");
+  }
+
+  function deletePress() {
+    deleteChores(chore.id);
+    navigation.navigate("ViewChores");
+  }
 
   function getButtons() {
     let buttons = [];
@@ -61,16 +73,10 @@ export default function EditChore({ navigation }) {
             <Text style={styles.leftText}>Chore Difficulty Points</Text>
           </View>
           <View style={styles.row}>{getButtons()}</View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ViewChores")}
-            style={styles.saveButton}
-          >
+          <TouchableOpacity onPress={updatePress} style={styles.saveButton}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ViewChores")}
-            style={styles.deleteButton}
-          >
+          <TouchableOpacity onPress={deletePress} style={styles.deleteButton}>
             <Text style={styles.deleteButtonText}>Delete Chore</Text>
           </TouchableOpacity>
         </View>
@@ -79,7 +85,7 @@ export default function EditChore({ navigation }) {
   );
 }
 
-EditChore.navigationOptions = {
+EditChoreC.navigationOptions = {
   title: "Household"
 };
 
@@ -215,3 +221,21 @@ const styles = StyleSheet.create({
     color: "#FFFFFF"
   }
 });
+
+function mapStateToProps(state) {
+  const { chores } = state;
+
+  return {
+    chores
+  };
+}
+
+const mapDispatchToProps = {
+  updateChores,
+  deleteChores
+};
+
+export default EditChore = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditChoreC);

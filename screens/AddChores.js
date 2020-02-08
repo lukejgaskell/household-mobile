@@ -7,10 +7,17 @@ import {
   TextInput
 } from "react-native";
 import ChoresImage from "../assets/images/chores-icon.svg";
+import { addChores } from "../state/redux";
+import { connect } from "react-redux";
 
-export default function AddChores({ navigation }) {
+function AddChoresC({ navigation, addChores }) {
   const [name, setName] = useState("");
   const [difficulty, setDifficulty] = useState(null);
+
+  function add() {
+    addChores({ name, difficulty });
+    navigation.navigate("ViewChores");
+  }
 
   function getButtons() {
     let buttons = [];
@@ -59,10 +66,7 @@ export default function AddChores({ navigation }) {
           <Text style={styles.leftText}>Chore Difficulty Points</Text>
         </View>
         <View style={styles.row}>{getButtons()}</View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ViewChores")}
-          style={styles.button}
-        >
+        <TouchableOpacity onPress={add} style={styles.button}>
           <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
@@ -70,7 +74,7 @@ export default function AddChores({ navigation }) {
   );
 }
 
-AddChores.navigationOptions = {
+AddChoresC.navigationOptions = {
   title: "Household"
 };
 
@@ -190,3 +194,9 @@ const styles = StyleSheet.create({
     color: "#FFFFFF"
   }
 });
+
+const mapDispatchToProps = {
+  addChores
+};
+
+export default AddChores = connect(null, mapDispatchToProps)(AddChoresC);

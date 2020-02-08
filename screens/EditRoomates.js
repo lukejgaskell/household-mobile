@@ -7,37 +7,43 @@ import {
   TouchableOpacity,
   TextInput
 } from "react-native";
-import InviteRoomatesImage from "../assets/images/invite-roomates-icon.svg";
 import { Ionicons } from "@expo/vector-icons";
+import { connect } from "react-redux";
+import { addMembers, deleteMembers } from "../state/redux";
 
-export default function EditRoomates({ navigation }) {
-  const [emails, setEmails] = useState([
-    "jerryjones@gmail.com",
-    "ryanleaf@gmail.com"
-  ]);
-  const [newEmails, setNewEmails] = useState([""]);
+function EditRoomatesC({ navigation, members, addMembers, deleteMembers }) {
+  const [emails, setEmails] = useState([]);
+
+  function inviteMembers() {
+    emails.forEach(email => {
+      addMembers({ email, status: "pending" });
+    });
+    members.navigation.navigate("ViewHousehold");
+  }
 
   function getEmails() {
     let items = [];
-    emails.forEach((email, index) => {
-      items.push(
-        <View style={styles.emailWrapper} key={"o" + index}>
-          <Text style={styles.emailText}>{email}</Text>
-          <TouchableOpacity>
-            <Ionicons name="ios-close" size={32} color="red" />
-          </TouchableOpacity>
-        </View>
-      );
-    });
-    newEmails.forEach((email, index) => {
+    members
+      .filter(m => m.status !== "requested")
+      .forEach((m, index) => {
+        items.push(
+          <View style={styles.emailWrapper} key={"o" + index}>
+            <Text style={styles.emailText}>{m.email}</Text>
+            <TouchableOpacity onPress={() => deleteMembers(m.id)}>
+              <Ionicons name="ios-close" size={32} color="red" />
+            </TouchableOpacity>
+          </View>
+        );
+      });
+
+    emails.forEach((m, index) => {
       items.push(
         <View style={styles.inputWrapper} key={"n" + index}>
           <TextInput
             style={styles.input}
             onChangeText={text => {
-              const newEmails = [...emails];
-              newEmails[index] = text;
-              setEmails(newEmails);
+              emails[index] = text;
+              setEmails([...emails]);
             }}
             placeholder="Enter Email Address"
             value={email}
@@ -58,13 +64,13 @@ export default function EditRoomates({ navigation }) {
           <Text style={styles.welcomeText}>Edit Roomates</Text>
           <View style={styles.chores}>{getEmails()}</View>
           <TouchableOpacity
-            onPress={() => setNewEmails([...newEmails, ""])}
+            onPress={() => setEmails([...emails, ""])}
             style={styles.addButton}
           >
             <Ionicons name="ios-add" size={32} color="white" />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate("ViewHousehold")}
+            onPress={() => inviteMembers()}
             style={styles.button}
           >
             <Text style={styles.buttonText}>Invite</Text>
@@ -75,7 +81,7 @@ export default function EditRoomates({ navigation }) {
   );
 }
 
-EditRoomates.navigationOptions = {
+EditRoomatesC.navigationOptions = {
   title: "Household"
 };
 
@@ -188,3 +194,18 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+function mapStateToProps(state) {
+  const { members } = state;
+
+  return { members };
+}
+
+const mapDispatchToProps = {
+  addMembers,
+  deleteMembers
+};
+
+export default EditRoomates = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditRoomatesC);
