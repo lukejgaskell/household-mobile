@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   ScrollView,
-  TouchableOpacity
-} from "react-native";
-import HouseImage from "../assets/images/chores-icon.svg";
-import { Ionicons } from "@expo/vector-icons";
-import { connect } from "react-redux";
-import { getScore } from "../services/activity";
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+
+import ActivityCard from '../components/ActivityCard';
+import Colors from '../constants/Colors';
+// @ts-ignore
+import HouseImage from '../assets/images/house-icon.svg';
+import ImagePage from '../components/ImagePage';
+import { Ionicons } from '@expo/vector-icons';
+import { MemberStatuses } from '../constants/Statuses';
+import NavOptions from '../constants/NavOptions';
+import { connect } from 'react-redux';
+import { getScore } from '../utilities/activity';
 
 function ViewHouseholdC({
   navigation,
@@ -45,14 +52,14 @@ function ViewHouseholdC({
             >
               {member.initials}
             </Text>
-            {member.status === "active" && (
+            {member.status === MemberStatuses.ACTIVE && (
               <View style={styles.choreCounter}>
                 <Text style={styles.choreCounterText}>
                   {getScore(activity, currentUser.id)}
                 </Text>
               </View>
             )}
-            {!member.status === "active" && (
+            {member.status !== MemberStatuses.ACTIVE && (
               <Text style={styles.pendingText}>Pending</Text>
             )}
           </View>
@@ -63,78 +70,62 @@ function ViewHouseholdC({
   function getChoreFeed() {
     return activity
       .filter(
-        c => selectedMember === null || c.completedById === selectedMember.id
+        (c) => selectedMember === null || c.completedById === selectedMember.id
       )
       .map((a, index) => {
-        return (
-          <View key={index} style={styles.card}>
-            <View style={styles.chorePointValue}>
-              <Text style={styles.chorePointValueText}>{"+" + a.points}</Text>
-            </View>
-            <View style={styles.choreDescription}>
-              <View style={styles.row}>
-                <Text style={styles.completedBy}>{a.completedBy}</Text>
-                <Text>{" completed"}</Text>
-              </View>
-              <Text style={styles.choreName}>{a.name}</Text>
-            </View>
-            <Text style={styles.choreDate}>{a.completedDate}</Text>
-          </View>
-        );
+        return <ActivityCard key={index} activity={a} />;
       });
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.imageGrouping}>
-        {selectedMember !== null ? (
-          <>
-            <View style={styles.bigPersona}>
-              <Text style={styles.bigPersonaText}>
-                {selectedMember?.initials}
-              </Text>
-            </View>
-            <Text style={styles.welcomeText}>{selectedMember?.name}</Text>
-            <Text style={styles.pointsText}>
-              {selectedMember?.score + " Points"}
-            </Text>
-          </>
-        ) : (
-          <>
-            <HouseImage />
-            <Text style={styles.welcomeText}>{householdName}</Text>
-          </>
-        )}
-        <View style={styles.members}>{getMembers()}</View>
-        <View style={styles.chores}>
-          <ScrollView>
-            {activity.length > 0 ? (
-              getChoreFeed()
-            ) : (
-              <Text style={styles.noChoresMessage}>
-                {"No chores recorded yet"}
-              </Text>
-            )}
-          </ScrollView>
+  function PersonaImage() {
+    return (
+      <>
+        <View style={styles.bigPersona}>
+          <Text style={styles.bigPersonaText}>{selectedMember?.initials}</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RecordAChore")}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Record Chore</Text>
-        </TouchableOpacity>
+      </>
+    );
+  }
+
+  return (
+    <ImagePage
+      Image={selectedMember !== null ? PersonaImage : HouseImage}
+      titleText={selectedMember !== null ? selectedMember.name : householdName}
+    >
+      {selectedMember !== null ? (
+        <Text style={styles.pointsText}>
+          {getScore(activity, selectedMember.id) + ' Points'}
+        </Text>
+      ) : null}
+      <View style={styles.members}>{getMembers()}</View>
+      <View style={styles.chores}>
+        <ScrollView>
+          {activity.length > 0 ? (
+            getChoreFeed()
+          ) : (
+            <Text style={styles.noChoresMessage}>
+              {'No chores recorded yet'}
+            </Text>
+          )}
+        </ScrollView>
       </View>
-    </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(NavOptions.RecordAChore)}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Record Chore</Text>
+      </TouchableOpacity>
+    </ImagePage>
   );
 }
 
 ViewHouseholdC.navigationOptions = ({ navigation }) => ({
-  title: "Household",
+  title: 'Household',
   headerLeft: null,
   headerRight: (
     <TouchableOpacity
       style={styles.gearIcon}
-      onPress={() => navigation.navigate("Settings")}
+      onPress={() => navigation.navigate(NavOptions.Settings)}
     >
       <Ionicons name="ios-cog" size={32} color="black" />
     </TouchableOpacity>
@@ -142,34 +133,21 @@ ViewHouseholdC.navigationOptions = ({ navigation }) => ({
 });
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
   row: {
-    flexDirection: "row"
-  },
-  welcomeText: {
-    color: "#6C63FF",
-    lineHeight: 37,
-    marginTop: 30,
-    fontStyle: "normal",
-    fontWeight: "800",
-    fontSize: 32
+    flexDirection: 'row'
   },
   pointsText: {
-    color: "#6C63FF",
+    color: Colors.primary,
     lineHeight: 22,
-    marginTop: 20,
-    marginBottom: 15,
-    fontStyle: "normal",
-    fontSize: 16
+    fontStyle: 'normal',
+    fontSize: 16,
+    marginBottom: 10
   },
   gearIcon: {
     marginRight: 20
   },
   card: {
-    shadowColor: "#000000",
+    shadowColor: '#000000',
     shadowOpacity: 0.25,
     shadowOffset: {
       width: 0,
@@ -177,35 +155,27 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 1.25,
     elevation: 2,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.background,
     borderRadius: 12,
     height: 64,
     marginTop: 5,
     marginBottom: 5,
     marginRight: 15,
     marginLeft: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     paddingRight: 10,
     paddingLeft: 10
   },
   members: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     marginBottom: 30
   },
-  contentContainer: {},
-  imageGrouping: {
-    alignItems: "center",
-    marginTop: "10%",
-    marginBottom: "10%",
-    marginBottom: 20
-  },
   chores: {
-    backgroundColor: "#F5F5F5",
-    width: "100%",
+    backgroundColor: '#F5F5F5',
+    width: '100%',
     height: 300
   },
   persona: {
@@ -214,9 +184,9 @@ const styles = StyleSheet.create({
     height: 56,
     marginLeft: 15,
     marginRight: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E7E7E7"
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E7E7E7'
   },
   selectedPersona: {
     borderRadius: 56,
@@ -224,9 +194,9 @@ const styles = StyleSheet.create({
     height: 56,
     marginLeft: 15,
     marginRight: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#B4B0FB"
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#B4B0FB'
   },
   bigPersona: {
     borderRadius: 112,
@@ -235,116 +205,86 @@ const styles = StyleSheet.create({
     marginTop: 21,
     marginLeft: 15,
     marginRight: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#B4B0FB"
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#B4B0FB'
   },
   choreCounter: {
-    position: "absolute",
-    borderStyle: "solid",
+    position: 'absolute',
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 32,
     width: 32,
     height: 32,
     right: -12,
     bottom: -12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#6C63FF"
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary
   },
   choreCounterText: {
-    color: "#FFFFFF"
+    color: Colors.background
   },
   personaText: {
     fontSize: 24,
     lineHeight: 32,
-    color: "#3F3D56"
+    color: '#3F3D56'
   },
   selectedPesonaText: {
     fontSize: 24,
     lineHeight: 32,
-    color: "#FFFFFF"
+    color: Colors.background
   },
   bigPersonaText: {
     fontSize: 48,
     lineHeight: 58,
-    color: "#FFFFFF"
+    color: Colors.background
   },
   button: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 60,
     marginTop: 20,
-    alignItems: "center",
-    width: "40%",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    width: '40%',
+    justifyContent: 'center',
+    flexDirection: 'row',
     height: 47,
-    backgroundColor: "#6C63FF"
+    backgroundColor: Colors.primary
   },
   buttonText: {
     // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     fontSize: 16,
     lineHeight: 19,
-    color: "#FFFFFF"
+    color: Colors.background
   },
   text: {
     // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
-    textAlign: "center",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    textAlign: 'center',
     fontSize: 14,
     lineHeight: 16,
-    color: "#7C7C7C",
+    color: Colors.secondary,
     marginTop: 20,
     marginBottom: 30,
-    width: "80%"
-  },
-  chorePointValue: {
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#6C63FF",
-    borderRadius: 32,
-    width: 32,
-    height: 32,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#6C63FF",
-    marginRight: 15
-  },
-  chorePointValueText: {
-    color: "#FFFFFF"
-  },
-  choreDescription: {
-    width: "65%"
-  },
-  completedBy: {
-    color: "#6C63FF",
-    fontWeight: "bold"
-  },
-  choreName: {
-    fontWeight: "bold"
-  },
-  choreDate: {
-    top: 15,
-    alignSelf: "flex-start",
-    color: "#6C63FF"
+    width: '80%'
   },
   noChoresMessage: {
-    textAlign: "center",
-    width: "100%",
-    color: "#7C7C7C",
+    textAlign: 'center',
+    width: '100%',
+    color: Colors.secondary,
     marginTop: 40,
     fontSize: 16,
     lineHeight: 19
   },
   pendingText: {
-    position: "absolute",
-    color: "#7C7C7C",
+    position: 'absolute',
+    color: Colors.secondary,
     fontSize: 14,
     lineHeight: 16,
     bottom: -20
@@ -358,7 +298,4 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {};
 
-export default ViewHousehold = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ViewHouseholdC);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewHouseholdC);

@@ -1,29 +1,58 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
-  TextInput
-} from "react-native";
-import ChoresImage from "../assets/images/chores-icon.svg";
-import { updateChores, deleteChores } from "../state/redux";
-import { connect } from "react-redux";
+  View
+} from 'react-native';
+import { addChores, deleteChores, updateChores } from '../state/redux';
 
-function EditChoreC({ navigation, chores, updateChores, deleteChores }) {
-  const chore = navigation.getParam("chore", {});
-  const [name, setName] = useState(chore.name);
-  const [difficulty, setDifficulty] = useState(chore.difficulty);
+//@ts-ignore
+import ChoresImage from '../assets/images/chores-icon.svg';
+import Colors from '../constants/Colors';
+import DismissKeyboardView from '../components/DismissKeyboardView';
+import ImagePage from '../components/ImagePage';
+import NavOptions from '../constants/NavOptions';
+import { connect } from 'react-redux';
+import { isMaxChores } from '../utilities/chores';
+
+function EditChoreC({
+  navigation,
+  chores,
+  updateChores,
+  deleteChores,
+  addChores
+}) {
+  const chore = navigation.getParam('chore', {});
+  const [name, setName] = useState(chore.name || '');
+  const [difficulty, setDifficulty] = useState(chore.difficulty || null);
+  const [error, setError] = useState(null);
 
   function updatePress() {
-    updateChores({ id: chore.id, name, difficulty });
-    navigation.navigate("ViewChores");
+    if (name.trim().length < 1 || difficulty === undefined) {
+      setError('Please enter a name and difficulty');
+    } else {
+      if (chore.id) {
+        updateChores({ id: chore.id, name, difficulty });
+      } else {
+        if (!isMaxChores(chores)) {
+          addChores({ name, difficulty });
+        } else {
+          setError('Only 10 chores allowed at this time');
+        }
+      }
+      navigation.navigate(NavOptions.EditChores);
+      setError(null);
+    }
   }
 
   function deletePress() {
-    deleteChores(chore.id);
-    navigation.navigate("ViewChores");
+    if (chore.id !== undefined) {
+      deleteChores(chore.id);
+    }
+    navigation.navigate(NavOptions.EditChores);
   }
 
   function getButtons() {
@@ -53,189 +82,160 @@ function EditChoreC({ navigation, chores, updateChores, deleteChores }) {
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.imageGrouping}>
-          <ChoresImage />
-          <Text style={styles.welcomeText}>Edit Chore</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              onChangeText={text => setName(text)}
-              placeholder="Chore Name"
-              value={name}
-            />
-          </View>
-          <View>
-            <Text style={styles.leftText}>Chore Difficulty Points</Text>
-          </View>
-          <View style={styles.row}>{getButtons()}</View>
-          <TouchableOpacity onPress={updatePress} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={deletePress} style={styles.deleteButton}>
-            <Text style={styles.deleteButtonText}>Delete Chore</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+    <ImagePage Image={ChoresImage} titleText={'Edit Chore'}>
+      <DismissKeyboardView style={styles.inputWrapper}>
+        <TextInput
+          style={styles.input}
+          autoCompleteType="off"
+          onChangeText={(text) => setName(text)}
+          placeholder="Chore Name"
+          value={name}
+        />
+      </DismissKeyboardView>
+      <View>
+        <Text style={styles.leftText}>Chore Difficulty Points</Text>
+      </View>
+      <View style={styles.row}>{getButtons()}</View>
+      {error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <View style={styles.errorFiller} />
+      )}
+      <TouchableOpacity onPress={updatePress} style={styles.saveButton}>
+        <Text style={styles.saveButtonText}>Save</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={deletePress} style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>Delete Chore</Text>
+      </TouchableOpacity>
+    </ImagePage>
   );
 }
 
 EditChoreC.navigationOptions = {
-  title: "Household"
+  title: 'Household'
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
   row: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "75%"
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '75%'
+  },
+  errorText: {
+    marginTop: 20,
+    color: Colors.error
+  },
+  errorFiller: {
+    marginTop: 20,
+    height: 17
   },
   input: {
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 0,
-    backgroundColor: "#fff",
-    color: "#424242"
+    backgroundColor: Colors.background,
+    color: Colors.secondary
   },
   inputWrapper: {
-    flex: 1,
     marginTop: 20,
     marginBottom: 20,
-    textAlign: "center",
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    width: "80%",
-    borderBottomColor: "#C7C7C7",
+    width: '80%',
+    borderBottomColor: '#C7C7C7',
     borderBottomWidth: 1
   },
-  welcomeText: {
-    color: "#6C63FF",
-    lineHeight: 37,
-    marginTop: 30,
-    // fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "800",
-    fontSize: 32
-  },
-  contentContainer: {},
-  imageGrouping: {
-    alignItems: "center",
-    marginTop: "10%",
-    marginBottom: "10%",
-    marginBottom: 20
-  },
   saveButton: {
-    // border: "1px solid #6C63FF",
-    // boxSizing: "border-box",
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 60,
-    marginTop: 40,
-    alignItems: "center",
-    width: "40%",
-    justifyContent: "center",
-    flexDirection: "row",
+    marginTop: 10,
+    alignItems: 'center',
+    width: '40%',
+    justifyContent: 'center',
+    flexDirection: 'row',
     height: 47,
-    backgroundColor: "#6C63FF"
+    backgroundColor: Colors.primary
   },
   saveButtonText: {
-    // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     fontSize: 16,
     lineHeight: 19,
-    color: "#FFFFFF"
+    color: Colors.background
   },
   deleteButton: {
     marginTop: 30,
     padding: 10
   },
   deleteButtonText: {
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     fontSize: 12,
     lineHeight: 14,
-    color: "#FF0000"
+    color: Colors.error
   },
   text: {
-    // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
-    textAlign: "center",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    textAlign: 'center',
     fontSize: 14,
     lineHeight: 16,
-    color: "#7C7C7C",
+    color: Colors.secondary,
     marginTop: 20,
     marginBottom: 30,
-    width: "80%"
+    width: '80%'
   },
   leftText: {
-    // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
-    textAlign: "left",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    textAlign: 'left',
     fontSize: 14,
     lineHeight: 16,
-    color: "#7C7C7C",
+    color: Colors.secondary,
     marginTop: 20,
     marginBottom: 30,
-    width: "80%"
+    width: '80%'
   },
   roundButton: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 42,
     width: 42,
     height: 42,
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   roundButtonSelected: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 42,
     width: 42,
     height: 42,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#6C63FF"
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary
   },
   roundButtonText: {
-    color: "#6C63FF"
+    color: Colors.primary
   },
   roundButtonTextSelected: {
-    color: "#FFFFFF"
+    color: Colors.background
   }
 });
 
 function mapStateToProps(state) {
   const { chores } = state;
-
-  return {
-    chores
-  };
+  return { chores };
 }
 
 const mapDispatchToProps = {
   updateChores,
-  deleteChores
+  deleteChores,
+  addChores
 };
 
-export default EditChore = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditChoreC);
+export default connect(mapStateToProps, mapDispatchToProps)(EditChoreC);

@@ -1,139 +1,158 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   StyleSheet,
-  View,
   Text,
+  TextInput,
   TouchableOpacity,
-  TextInput
-} from "react-native";
-import CreateHouseholdImage from "../assets/images/create-household-icon.svg";
-import { connect } from "react-redux";
-import { setHouseholdName, addMembers } from "../state/redux";
+  View
+} from 'react-native';
+import { addMembers, setHouseholdName } from '../state/redux';
+
+import Colors from '../constants/Colors';
+// @ts-ignore
+import CreateHouseholdImage from '../assets/images/create-household-icon.svg';
+import DismissKeyboardView from '../components/DismissKeyboardView';
+import ImagePage from '../components/ImagePage';
+import NavOptions from '../constants/NavOptions';
+import { connect } from 'react-redux';
 
 function CreateHouseholdC({
   navigation,
   setHouseholdName,
   householdName,
   addMembers,
+  members,
   currentUser
 }) {
+  const [showError, setShowError] = useState(false);
+
   function submit() {
-    addMembers({
-      name: currentUser.name,
-      email: currentUser.email,
-      id: currentUser.id,
-      initials: currentUser.initials,
-      status: currentUser.status
-    });
-    navigation.navigate("AddChores");
+    if (householdName.length < 1) {
+      setShowError(true);
+    } else {
+      if (members.filter((m) => m.id === currentUser.id).length === 0) {
+        addMembers({
+          name: currentUser.name,
+          email: currentUser.email,
+          id: currentUser.id,
+          initials: currentUser.initials,
+          status: currentUser.status
+        });
+      }
+      navigation.navigate(NavOptions.ViewChores);
+      setShowError(false);
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.imageGrouping}>
-        <CreateHouseholdImage />
-        <Text style={styles.welcomeText}>Create Household</Text>
-        <Text style={styles.text}>
-          Create a household to begin tracking chores and make your house work
-          fun!
-        </Text>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => setHouseholdName(text)}
-            placeholder="Household Name"
-            value={householdName}
-          />
-        </View>
-        <TouchableOpacity onPress={() => submit()} style={styles.button}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <ImagePage
+      Image={CreateHouseholdImage}
+      titleText={'Create Household'}
+      subText={
+        'Create a household to begin tracking chores and make your house work fun!'
+      }
+    >
+      <DismissKeyboardView style={styles.inputWrapper}>
+        <TextInput
+          style={styles.input}
+          autoFocus={true}
+          autoCompleteType="off"
+          onChangeText={(text) => setHouseholdName(text)}
+          placeholder="Household Name"
+          value={householdName}
+        />
+      </DismissKeyboardView>
+      {showError ? (
+        <Text style={styles.errorText}>Please enter a household name</Text>
+      ) : (
+        <View style={styles.errorFiller}></View>
+      )}
+      <TouchableOpacity onPress={() => submit()} style={styles.button}>
+        <Text style={styles.buttonText}>Next</Text>
+      </TouchableOpacity>
+    </ImagePage>
   );
 }
 
 CreateHouseholdC.navigationOptions = {
-  title: "Household"
+  title: 'Household'
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
+  errorText: {
+    color: Colors.error
+  },
+  errorFiller: {
+    height: 17
   },
   input: {
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 0,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
 
-    color: "#424242"
+    color: '#424242'
   },
   inputWrapper: {
     marginTop: 20,
     marginBottom: 20,
-    width: "80%",
-    borderBottomColor: "#C7C7C7",
+    width: '80%',
+    borderBottomColor: '#C7C7C7',
     borderBottomWidth: 1
   },
   welcomeText: {
-    color: "#6C63FF",
+    color: Colors.primary,
     lineHeight: 37,
     marginTop: 30,
     // fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "800",
+    fontStyle: 'normal',
+    fontWeight: '800',
     fontSize: 32
   },
   contentContainer: {},
   imageGrouping: {
-    alignItems: "center",
-    marginTop: "10%",
-    marginBottom: "10%",
+    alignItems: 'center',
+    marginTop: '10%',
     marginBottom: 20
   },
   button: {
-    // border: "1px solid #6C63FF",
-    // boxSizing: "border-box",
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 60,
     marginTop: 40,
-    alignItems: "center",
-    width: "50%",
-    marginLeft: "5%",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    width: '50%',
+    marginLeft: '5%',
+    justifyContent: 'center',
+    flexDirection: 'row',
     height: 47
   },
   buttonText: {
-    // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     fontSize: 16,
     lineHeight: 19,
-    color: "#6C63FF"
+    color: Colors.primary
   },
   text: {
     // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
-    textAlign: "center",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    textAlign: 'center',
     fontSize: 14,
     lineHeight: 16,
-    color: "#7C7C7C",
+    color: Colors.secondary,
     marginTop: 20,
     marginBottom: 30,
-    width: "80%"
+    width: '80%'
   }
 });
 
 function mapStateToProps(state) {
-  const { householdName, currentUser } = state;
-  return { householdName, currentUser };
+  const { householdName, currentUser, members } = state;
+  return { householdName, currentUser, members };
 }
 
 const mapDispatchToProps = {
@@ -141,7 +160,4 @@ const mapDispatchToProps = {
   addMembers
 };
 
-export default CreateHousehold = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CreateHouseholdC);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateHouseholdC);

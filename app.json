@@ -12,7 +12,9 @@
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "splash": {},
+    "splash": {
+      "backgroundColor": "#6C63FF"
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },

@@ -1,195 +1,192 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
-  TextInput
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { connect } from "react-redux";
-import { addMembers, deleteMembers } from "../state/redux";
+  View
+} from 'react-native';
+import { addMembers, deleteMembers } from '../state/redux';
+
+import Colors from '../constants/Colors';
+import DismissKeyboardView from '../components/DismissKeyboardView';
+import { Ionicons } from '@expo/vector-icons';
+import NavOptions from '../constants/NavOptions';
+import Page from '../components/Page';
+import { connect } from 'react-redux';
 
 function EditRoomatesC({ navigation, members, addMembers, deleteMembers }) {
   const [emails, setEmails] = useState([]);
+  const [showError, setShowError] = useState(false);
 
   function inviteMembers() {
-    emails.forEach(email => {
-      addMembers({ email, status: "pending" });
-    });
-    members.navigation.navigate("ViewHousehold");
+    const invalidEmails = emails.some(
+      (e) => e.trim().length === 0 || !e.includes('@')
+    );
+    if (invalidEmails) {
+      setShowError(true);
+    } else {
+      emails.forEach((email) => {
+        addMembers({
+          email,
+          status: 'pending',
+          initials: email.substring(0, 2).toUpperCase()
+        });
+      });
+      members.navigation.navigate(NavOptions.ViewHousehold);
+      setShowError(false);
+    }
   }
 
   function getEmails() {
     let items = [];
-    members
-      .filter(m => m.status !== "requested")
-      .forEach((m, index) => {
-        items.push(
-          <View style={styles.emailWrapper} key={"o" + index}>
-            <Text style={styles.emailText}>{m.email}</Text>
-            <TouchableOpacity onPress={() => deleteMembers(m.id)}>
-              <Ionicons name="ios-close" size={32} color="red" />
-            </TouchableOpacity>
-          </View>
-        );
-      });
-
-    emails.forEach((m, index) => {
+    members.forEach((m, index) => {
       items.push(
-        <View style={styles.inputWrapper} key={"n" + index}>
+        <View style={styles.emailWrapper} key={'o' + index}>
+          <Text style={styles.emailText}>{m.email}</Text>
+          <TouchableOpacity onPress={() => deleteMembers(m.id)}>
+            <Ionicons name="ios-close" size={32} color="red" />
+          </TouchableOpacity>
+        </View>
+      );
+    });
+
+    emails.forEach((email, index) => {
+      items.push(
+        <DismissKeyboardView style={styles.inputWrapper} key={'n' + index}>
           <TextInput
             style={styles.input}
-            onChangeText={text => {
+            autoCompleteType="off"
+            onChangeText={(text) => {
               emails[index] = text;
               setEmails([...emails]);
             }}
             placeholder="Enter Email Address"
             value={email}
           />
-        </View>
+        </DismissKeyboardView>
       );
     });
     return items;
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
+    <Page titleText={'Edit Roomates'}>
+      <View style={styles.chores}>{getEmails()}</View>
+      <TouchableOpacity
+        onPress={() => setEmails([...emails, ''])}
+        style={styles.addButton}
       >
-        <View style={styles.imageGrouping}>
-          <Text style={styles.welcomeText}>Edit Roomates</Text>
-          <View style={styles.chores}>{getEmails()}</View>
-          <TouchableOpacity
-            onPress={() => setEmails([...emails, ""])}
-            style={styles.addButton}
-          >
-            <Ionicons name="ios-add" size={32} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => inviteMembers()}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Invite</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+        <Ionicons name="ios-add" size={32} color="white" />
+      </TouchableOpacity>
+      {showError ? (
+        <Text style={styles.errorText}>Please enter valid emails</Text>
+      ) : (
+        <View style={styles.errorFiller}></View>
+      )}
+      <TouchableOpacity onPress={() => inviteMembers()} style={styles.button}>
+        <Text style={styles.buttonText}>Invite</Text>
+      </TouchableOpacity>
+    </Page>
   );
 }
 
 EditRoomatesC.navigationOptions = {
-  title: "Household"
+  title: 'Household'
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-  welcomeText: {
-    color: "#6C63FF",
-    lineHeight: 37,
-    marginTop: 30,
-    // fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "800",
-    fontSize: 32
-  },
-  contentContainer: {},
-  imageGrouping: {
-    alignItems: "center",
-    marginTop: "10%",
-    marginBottom: "10%",
-    marginBottom: 20
-  },
   chores: {
     marginTop: 20
   },
+  errorText: {
+    color: Colors.error
+  },
+  errorFiller: {
+    height: 17
+  },
   button: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 60,
     marginTop: 40,
-    alignItems: "center",
-    width: "40%",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    width: '40%',
+    justifyContent: 'center',
+    flexDirection: 'row',
     height: 47
   },
   buttonText: {
     // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     fontSize: 16,
     lineHeight: 19,
-    color: "#6C63FF"
+    color: Colors.primary
   },
   text: {
     // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
-    textAlign: "center",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    textAlign: 'center',
     fontSize: 14,
     lineHeight: 16,
-    color: "#7C7C7C",
+    color: Colors.secondary,
     marginTop: 20,
     marginBottom: 30,
-    width: "80%"
+    width: '80%'
   },
   input: {
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 0,
-    backgroundColor: "#fff",
-    color: "#424242"
+    backgroundColor: '#fff',
+    color: '#424242'
   },
   inputWrapper: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#AFAFAF",
+    borderColor: '#AFAFAF',
     borderRadius: 8,
     marginTop: 8,
     marginBottom: 8,
     paddingLeft: 8,
     paddingRight: 8,
-    textAlign: "center",
-    flexDirection: "row",
+    textAlign: 'center',
+    flexDirection: 'row',
     width: 325,
     height: 50
   },
   emailWrapper: {
-    backgroundColor: "#F4F4F4",
+    backgroundColor: '#F4F4F4',
     borderRadius: 8,
     marginTop: 8,
     marginBottom: 8,
     paddingLeft: 16,
     paddingRight: 16,
-    textAlign: "center",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
+    textAlign: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
     width: 325,
     height: 50
   },
   emailText: {
-    color: "#7C7C7C"
+    color: Colors.secondary
   },
   addButton: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 34,
     width: 34,
     height: 34,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#6C63FF",
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
     marginTop: 15,
     marginBottom: 10
   }
@@ -205,7 +202,4 @@ const mapDispatchToProps = {
   deleteMembers
 };
 
-export default EditRoomates = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditRoomatesC);
+export default connect(mapStateToProps, mapDispatchToProps)(EditRoomatesC);

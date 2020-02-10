@@ -1,34 +1,31 @@
-import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity
-} from "react-native";
-import LoginImage from "../assets/images/login-icon.svg";
-import GoogleLogo from "../assets/images/google-icon.svg";
-import FacebookLogo from "../assets/images/facebook-icon.svg";
-import { setCurrentUser } from "../state/redux";
-import { connect } from "react-redux";
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+
+import Colors from '../constants/Colors';
+// @ts-ignore
+import FacebookLogo from '../assets/images/facebook-icon.svg';
+// @ts-ignore
+import GoogleLogo from '../assets/images/google-icon.svg';
+import ImagePage from '../components/ImagePage';
+// @ts-ignore
+import LoginImage from '../assets/images/login-icon.svg';
+import NavOptions from '../constants/NavOptions';
+import React from 'react';
+import { connect } from 'react-redux';
+import { setCurrentUser } from '../state/redux';
 
 function LoginScreenC({ navigation, setCurrentUser }) {
   function login() {
     setCurrentUser({
-      name: "Me",
+      name: 'Me',
       id: 0,
-      initials: "Me",
-      email: "me@gmail.com",
-      status: "active"
+      initials: 'ME',
+      email: 'me@gmail.com',
+      status: 'active'
     });
-    navigation.navigate("FindOrCreate");
+    navigation.navigate(NavOptions.CreateHousehold);
   }
   return (
-    <View style={styles.container}>
-      <View style={styles.welcomeContainer}>
-        <LoginImage />
-        <Text style={styles.welcomeText}>Welcome</Text>
-      </View>
+    <ImagePage Image={LoginImage} titleText={'Welcome'}>
       <TouchableOpacity onPress={() => login()} style={styles.loginButton}>
         <GoogleLogo />
         <Text style={styles.loginText}>Login With Google</Text>
@@ -37,64 +34,35 @@ function LoginScreenC({ navigation, setCurrentUser }) {
         <FacebookLogo style={styles.facebookLogo} />
         <Text style={styles.loginText}>Login With Facebook</Text>
       </TouchableOpacity>
-    </View>
+    </ImagePage>
   );
 }
 
 LoginScreenC.navigationOptions = {
-  title: "Household"
+  title: 'Household'
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-  contentContainer: {},
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: "contain",
-    marginTop: 80,
-    marginLeft: -10
-  },
-  welcomeContainer: {
-    alignItems: "center",
-    marginTop: "30%",
-    marginBottom: 20
-  },
-  welcomeText: {
-    color: "#6C63FF",
-    lineHeight: 37,
-    marginTop: 30,
-    // fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "800",
-    fontSize: 32
-  },
   loginButton: {
-    // border: "1px solid #6C63FF",
-    // boxSizing: "border-box",
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 60,
     marginTop: 30,
-    alignItems: "center",
-    width: "90%",
-    marginLeft: "5%",
-    justifyContent: "flex-start",
-    flexDirection: "row",
+    alignItems: 'center',
+    width: '90%',
+    marginLeft: '5%',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
     height: 47,
     paddingLeft: 18
   },
   loginText: {
-    // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     fontSize: 16,
     lineHeight: 19,
-    color: "#6C63FF",
+    color: Colors.primary,
     marginLeft: 80
   },
   facebookLogo: {
@@ -108,7 +76,4 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = { setCurrentUser };
 
-export default LoginScreen = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginScreenC);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreenC);

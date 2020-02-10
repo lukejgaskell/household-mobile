@@ -1,45 +1,29 @@
-import React from "react";
-import { Platform } from "react-native";
-import { createStackNavigator } from "react-navigation-stack";
+import CreateHousehold from '../screens/CreateHousehold';
+import EditChore from '../screens/EditChore';
+import EditChores from '../screens/EditChores';
+import EditRoomates from '../screens/EditRoomates';
+import InviteRoomates from '../screens/InviteRoomates';
+import LoginScreen from '../screens/LoginScreen';
+import NavOptions from '../constants/NavOptions';
+import RecordAChore from '../screens/RecordAChore';
+import Settings from '../screens/Settings';
+import ViewChores from '../screens/ViewChores';
+import ViewHousehold from '../screens/ViewHousehold';
+import { createStackNavigator } from 'react-navigation-stack';
 
-import FindOrCreate from "../screens/FindOrCreate";
-import LoginScreen from "../screens/LoginScreen";
-import JoinHousehold from "../screens/JoinHousehold";
-import CreateHousehold from "../screens/CreateHousehold";
-import AddChores from "../screens/AddChores";
-import ViewChores from "../screens/ViewChores";
-import EditChore from "../screens/EditChore";
-import InviteRoomates from "../screens/InviteRoomates";
-import ViewHousehold from "../screens/ViewHousehold";
-import RecordAChore from "../screens/RecordAChore";
-import Settings from "../screens/Settings";
-import EditChores from "../screens/EditChores";
-import EditRoomates from "../screens/EditRoomates";
-
-const config = Platform.select({
-  web: { headerMode: "screen" },
-  default: {}
+const WelcomeStack = createStackNavigator({
+  [NavOptions.Home]: LoginScreen,
+  [NavOptions.CreateHousehold]: CreateHousehold,
+  [NavOptions.ViewChores]: ViewChores,
+  [NavOptions.EditChore]: EditChore,
+  [NavOptions.InviteRoomates]: InviteRoomates,
+  [NavOptions.ViewHousehold]: ViewHousehold,
+  [NavOptions.RecordAChore]: RecordAChore,
+  [NavOptions.Settings]: Settings,
+  [NavOptions.EditChores]: EditChores,
+  [NavOptions.EditRoomates]: EditRoomates
 });
 
-const WelcomeStack = createStackNavigator(
-  {
-    Home: LoginScreen,
-    FindOrCreate: FindOrCreate,
-    JoinHousehold: JoinHousehold,
-    CreateHousehold: CreateHousehold,
-    AddChores: AddChores,
-    ViewChores: ViewChores,
-    EditChore: EditChore,
-    InviteRoomates: InviteRoomates,
-    ViewHousehold: ViewHousehold,
-    RecordAChore: RecordAChore,
-    Settings: Settings,
-    EditChores: EditChores,
-    EditRoomates: EditRoomates
-  },
-  config
-);
-
-WelcomeStack.path = "";
+WelcomeStack.path = '';
 
 export default WelcomeStack;

@@ -1,180 +1,157 @@
-import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity
-} from "react-native";
-import ChoresImage from "../assets/images/chores-icon.svg";
-import { Ionicons } from "@expo/vector-icons";
-import { connect } from "react-redux";
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-function ViewChoresC({ navigation, chores }) {
+import ChoreCard from '../components/ChoreCard';
+// @ts-ignore
+import ChoresImage from '../assets/images/chores-icon.svg';
+import Colors from '../constants/Colors';
+import ImagePage from '../components/ImagePage';
+import NavOptions from '../constants/NavOptions';
+import { addChores } from '../state/redux';
+import { connect } from 'react-redux';
+
+const suggestedChores = [
+  {
+    key: 1,
+    name: 'Take out the Trash',
+    difficulty: 1
+  },
+  {
+    key: 2,
+    name: 'Do the Dishes',
+    difficulty: 3
+  },
+  {
+    key: 3,
+    name: 'Vacuum the Floors',
+    difficulty: 4
+  }
+];
+
+function ViewChoresC({ navigation, addChores }) {
+  const [selectedChores, setSelectedChores] = useState([]);
+  const [showError, setShowError] = useState(false);
+
+  function submit() {
+    if (selectedChores.length > 0) {
+      selectedChores.forEach((sc) => {
+        addChores(sc);
+      });
+      navigation.navigate(NavOptions.InviteRoomates);
+      setShowError(false);
+    } else {
+      setShowError(true);
+    }
+  }
+
+  function selectChore(chore) {
+    if (selectedChores.filter((sc) => sc.key === chore.key).length > 0) {
+      setSelectedChores([
+        ...selectedChores.filter((sc) => sc.key !== chore.key)
+      ]);
+    } else {
+      setSelectedChores([...selectedChores, chore]);
+    }
+  }
+
   function getChores() {
     let items = [];
-    chores.forEach((chore, index) => {
+    suggestedChores.forEach((chore, index) => {
       items.push(
-        <TouchableOpacity
-          onPress={() => navigation.navigate("EditChore", { chore })}
-          style={styles.choreButton}
+        <ChoreCard
           key={index}
-        >
-          <Text style={styles.choreButtonText}>{chore.name}</Text>
-          <View style={styles.roundButtonSelected}>
-            <Text style={styles.roundButtonTextSelected}>
-              {chore.difficulty}
-            </Text>
-          </View>
-        </TouchableOpacity>
+          chore={chore}
+          isSelected={
+            selectedChores.filter((sc) => sc.key === chore.key).length > 0
+          }
+          onPress={() => selectChore(chore)}
+        />
       );
     });
     return items;
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <View style={styles.imageGrouping}>
-          <ChoresImage />
-          <Text style={styles.welcomeText}>Chores</Text>
-          <View style={styles.chores}>{getChores()}</View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("AddChores")}
-            style={styles.addButton}
-          >
-            <Ionicons name="ios-add" size={32} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("InviteRoomates")}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+    <ImagePage Image={ChoresImage} titleText={'Chores'}>
+      <View style={styles.chores}>{getChores()}</View>
+      {showError ? (
+        <Text style={styles.errorText}>Please select at least one option.</Text>
+      ) : (
+        <View style={styles.errorTextFiller}></View>
+      )}
+      <TouchableOpacity onPress={() => submit()} style={styles.button}>
+        <Text style={styles.buttonText}>Next</Text>
+      </TouchableOpacity>
+    </ImagePage>
   );
 }
 
 ViewChoresC.navigationOptions = {
-  title: "Household"
+  title: 'Household'
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
+  chores: {},
+  errorText: {
+    marginTop: 20,
+    color: Colors.error
   },
-  welcomeText: {
-    color: "#6C63FF",
-    lineHeight: 37,
-    marginTop: 30,
-    // fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "800",
-    fontSize: 32
-  },
-  contentContainer: {},
-  imageGrouping: {
-    alignItems: "center",
-    marginTop: "10%",
-    marginBottom: "10%",
-    marginBottom: 20
-  },
-  chores: {
-    marginTop: 20
+  errorTextFiller: {
+    marginTop: 37
   },
   button: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 60,
-    marginTop: 40,
-    alignItems: "center",
-    width: "40%",
-    justifyContent: "center",
-    flexDirection: "row",
+    marginTop: 10,
+    alignItems: 'center',
+    width: '40%',
+    justifyContent: 'center',
+    flexDirection: 'row',
     height: 47
   },
   buttonText: {
     // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     fontSize: 16,
     lineHeight: 19,
-    color: "#6C63FF"
+    color: Colors.primary
   },
   text: {
     // fontFamily: 'Roboto',
-    fontStyle: "normal",
-    fontWeight: "normal",
-    textAlign: "center",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    textAlign: 'center',
     fontSize: 14,
     lineHeight: 16,
-    color: "#7C7C7C",
+    color: Colors.secondary,
     marginTop: 20,
     marginBottom: 30,
-    width: "80%"
-  },
-  choreButton: {
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#6C63FF",
-    borderRadius: 8,
-    width: 325,
-    height: 50,
-    marginTop: 8,
-    marginBottom: 8,
-    paddingLeft: 8,
-    paddingRight: 8,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between"
-  },
-  choreButtonText: {
-    color: "#7C7C7C"
-  },
-  roundButtonSelected: {
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#6C63FF",
-    borderRadius: 42,
-    width: 42,
-    height: 42,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#6C63FF"
-  },
-  roundButtonTextSelected: {
-    color: "#FFFFFF"
+    width: '80%'
   },
   addButton: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#6C63FF",
+    borderColor: Colors.primary,
     borderRadius: 34,
     width: 34,
     height: 34,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#6C63FF",
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
     marginTop: 15,
     marginBottom: 10
   }
 });
 
 function mapStateToProps(state) {
-  const { chores } = state;
-  return { chores };
+  return {};
 }
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  addChores
+};
 
-export default ViewChores = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ViewChoresC);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewChoresC);
