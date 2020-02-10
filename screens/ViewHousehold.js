@@ -72,6 +72,7 @@ function ViewHouseholdC({
       .filter(
         (c) => selectedMember === null || c.completedById === selectedMember.id
       )
+      .sort((a, b) => a.completedDate > b.completedDate)
       .map((a, index) => {
         return <ActivityCard key={index} activity={a} />;
       });
@@ -98,17 +99,13 @@ function ViewHouseholdC({
         </Text>
       ) : null}
       <View style={styles.members}>{getMembers()}</View>
-      <View style={styles.chores}>
-        <ScrollView>
-          {activity.length > 0 ? (
-            getChoreFeed()
-          ) : (
-            <Text style={styles.noChoresMessage}>
-              {'No chores recorded yet'}
-            </Text>
-          )}
-        </ScrollView>
-      </View>
+      <ScrollView style={styles.chores}>
+        {activity.length > 0 ? (
+          getChoreFeed()
+        ) : (
+          <Text style={styles.noChoresMessage}>{'No chores recorded yet'}</Text>
+        )}
+      </ScrollView>
       <TouchableOpacity
         onPress={() => navigation.navigate(NavOptions.RecordAChore)}
         style={styles.button}

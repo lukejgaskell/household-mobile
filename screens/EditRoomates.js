@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -10,7 +9,6 @@ import {
 import { addMembers, deleteMembers } from '../state/redux';
 
 import Colors from '../constants/Colors';
-import DismissKeyboardView from '../components/DismissKeyboardView';
 import { Ionicons } from '@expo/vector-icons';
 import NavOptions from '../constants/NavOptions';
 import Page from '../components/Page';
@@ -30,11 +28,12 @@ function EditRoomatesC({ navigation, members, addMembers, deleteMembers }) {
       emails.forEach((email) => {
         addMembers({
           email,
+          name: email,
           status: 'pending',
           initials: email.substring(0, 2).toUpperCase()
         });
       });
-      members.navigation.navigate(NavOptions.ViewHousehold);
+      navigation.navigate(NavOptions.ViewHousehold);
       setShowError(false);
     }
   }
@@ -54,7 +53,7 @@ function EditRoomatesC({ navigation, members, addMembers, deleteMembers }) {
 
     emails.forEach((email, index) => {
       items.push(
-        <DismissKeyboardView style={styles.inputWrapper} key={'n' + index}>
+        <View style={styles.inputWrapper} key={'n' + index}>
           <TextInput
             style={styles.input}
             autoCompleteType="off"
@@ -65,15 +64,15 @@ function EditRoomatesC({ navigation, members, addMembers, deleteMembers }) {
             placeholder="Enter Email Address"
             value={email}
           />
-        </DismissKeyboardView>
+        </View>
       );
     });
     return items;
   }
 
   return (
-    <Page titleText={'Edit Roomates'}>
-      <View style={styles.chores}>{getEmails()}</View>
+    <Page titleText={'Edit Roomates'} dismissKeyboard={true}>
+      <View style={styles.emails}>{getEmails()}</View>
       <TouchableOpacity
         onPress={() => setEmails([...emails, ''])}
         style={styles.addButton}
@@ -97,7 +96,7 @@ EditRoomatesC.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  chores: {
+  emails: {
     marginTop: 20
   },
   errorText: {
@@ -119,7 +118,6 @@ const styles = StyleSheet.create({
     height: 47
   },
   buttonText: {
-    // fontFamily: 'Roboto',
     fontStyle: 'normal',
     fontWeight: 'normal',
     fontSize: 16,
@@ -127,7 +125,6 @@ const styles = StyleSheet.create({
     color: Colors.primary
   },
   text: {
-    // fontFamily: 'Roboto',
     fontStyle: 'normal',
     fontWeight: 'normal',
     textAlign: 'center',
@@ -139,12 +136,8 @@ const styles = StyleSheet.create({
     width: '80%'
   },
   input: {
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingBottom: 10,
-    paddingLeft: 0,
-    backgroundColor: '#fff',
-    color: '#424242'
+    width: '100%',
+    color: Colors.secondary
   },
   inputWrapper: {
     borderStyle: 'solid',
@@ -155,7 +148,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingLeft: 8,
     paddingRight: 8,
-    textAlign: 'center',
     flexDirection: 'row',
     width: 325,
     height: 50
@@ -191,6 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
 function mapStateToProps(state) {
   const { members } = state;
 

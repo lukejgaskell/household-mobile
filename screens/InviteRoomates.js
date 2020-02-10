@@ -76,7 +76,11 @@ function InviteRoomatesC({ navigation, addMembers }) {
   }
 
   return (
-    <ImagePage Image={InviteRoomatesImage} titleText={'Invite Roomates'}>
+    <ImagePage
+      Image={InviteRoomatesImage}
+      dismissKeyboard={true}
+      titleText={'Invite Roomates'}
+    >
       <View style={styles.chores}>{getEmails()}</View>
       <TouchableOpacity onPress={() => addEmail()} style={styles.addButton}>
         <Ionicons name="ios-add" size={32} color="white" />
@@ -169,8 +173,9 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 0,
-    backgroundColor: '#fff',
-    color: '#424242'
+    backgroundColor: Colors.background,
+    width: '100%',
+    color: Colors.secondary
   },
   inputWrapper: {
     borderStyle: 'solid',

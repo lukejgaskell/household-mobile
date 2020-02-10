@@ -82,8 +82,12 @@ function EditChoreC({
   }
 
   return (
-    <ImagePage Image={ChoresImage} titleText={'Edit Chore'}>
-      <DismissKeyboardView style={styles.inputWrapper}>
+    <ImagePage
+      Image={ChoresImage}
+      dismissKeyboard={true}
+      titleText={'Edit Chore'}
+    >
+      <View style={styles.inputWrapper}>
         <TextInput
           style={styles.input}
           autoCompleteType="off"
@@ -91,7 +95,7 @@ function EditChoreC({
           placeholder="Chore Name"
           value={name}
         />
-      </DismissKeyboardView>
+      </View>
       <View>
         <Text style={styles.leftText}>Chore Difficulty Points</Text>
       </View>
@@ -136,7 +140,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingLeft: 0,
     backgroundColor: Colors.background,
-    color: Colors.secondary
+    color: Colors.secondary,
+    width: '100%'
   },
   inputWrapper: {
     marginTop: 20,

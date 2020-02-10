@@ -2,14 +2,21 @@ import React, { Children } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import Colors from '../constants/Colors';
+import DismissKeyboardView from './DismissKeyboardView';
 
-export default function Page({ children, titleText, subText = null }) {
+export default function Page({
+  children,
+  titleText,
+  dismissKeyboard = false,
+  subText = null
+}) {
+  const Container = dismissKeyboard ? DismissKeyboardView : View;
   return (
-    <View style={styles.container}>
+    <Container style={styles.container}>
       <Text style={styles.welcomeText}>{titleText}</Text>
       {subText ? <Text style={styles.text}>{subText}</Text> : null}
       {children}
-    </View>
+    </Container>
   );
 }
 const styles = StyleSheet.create({

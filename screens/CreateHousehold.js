@@ -51,13 +51,14 @@ function CreateHouseholdC({
       subText={
         'Create a household to begin tracking chores and make your house work fun!'
       }
+      dismissKeyboard={true}
     >
       <DismissKeyboardView style={styles.inputWrapper}>
         <TextInput
           style={styles.input}
           autoFocus={true}
           autoCompleteType="off"
-          onChangeText={(text) => setHouseholdName(text)}
+          onChangeText={setHouseholdName}
           placeholder="Household Name"
           value={householdName}
         />
@@ -67,7 +68,7 @@ function CreateHouseholdC({
       ) : (
         <View style={styles.errorFiller}></View>
       )}
-      <TouchableOpacity onPress={() => submit()} style={styles.button}>
+      <TouchableOpacity onPress={submit} style={styles.button}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </ImagePage>
@@ -92,7 +93,8 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     backgroundColor: '#fff',
 
-    color: '#424242'
+    width: '100%',
+    color: Colors.secondary
   },
   inputWrapper: {
     marginTop: 20,
@@ -105,7 +107,6 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     lineHeight: 37,
     marginTop: 30,
-    // fontFamily: "Roboto",
     fontStyle: 'normal',
     fontWeight: '800',
     fontSize: 32
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.primary,
     borderRadius: 60,
-    marginTop: 40,
+    marginTop: 25,
     alignItems: 'center',
     width: '50%',
     marginLeft: '5%',
