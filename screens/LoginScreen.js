@@ -1,8 +1,8 @@
+import * as Google from 'expo-google-app-auth';
+
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import Colors from '../constants/Colors';
-// @ts-ignore
-import FacebookLogo from '../assets/images/facebook-icon.svg';
 // @ts-ignore
 import GoogleLogo from '../assets/images/google-icon.svg';
 import ImagePage from '../components/ImagePage';
@@ -11,28 +11,31 @@ import LoginImage from '../assets/images/login-icon.svg';
 import NavOptions from '../constants/NavOptions';
 import React from 'react';
 import { connect } from 'react-redux';
-import { setCurrentUser } from '../state/redux';
+import { dispatchUpdateCurrentUser } from '../state/users/redux';
 
-function LoginScreenC({ navigation, setCurrentUser }) {
-  function login() {
-    setCurrentUser({
-      name: 'Me',
-      id: 0,
-      initials: 'ME',
-      email: 'me@gmail.com',
-      status: 'active'
-    });
-    navigation.navigate(NavOptions.CreateHousehold);
+function LoginScreenC({ navigation, dispatchUpdateCurrentUser }) {
+  async function loginWithGoogle() {
+    try {
+      const result = await Google.logInAsync({
+        iosClientId:
+          '677980014088-cnlr4aha88l921r2gr6jegfd4p8i3div.apps.googleusercontent.com'
+      });
+      if (result.type === 'success') {
+        await dispatchUpdateCurrentUser(result.idToken);
+
+        navigation.navigate(NavOptions.CreateHousehold);
+      }
+    } catch (e) {}
   }
+
   return (
     <ImagePage Image={LoginImage} titleText={'Welcome'}>
-      <TouchableOpacity onPress={() => login()} style={styles.loginButton}>
+      <TouchableOpacity
+        onPress={() => loginWithGoogle()}
+        style={styles.loginButton}
+      >
         <GoogleLogo />
         <Text style={styles.loginText}>Login With Google</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => login()} style={styles.loginButton}>
-        <FacebookLogo style={styles.facebookLogo} />
-        <Text style={styles.loginText}>Login With Facebook</Text>
       </TouchableOpacity>
     </ImagePage>
   );
@@ -74,6 +77,6 @@ function mapStateToProps(state) {
   return {};
 }
 
-const mapDispatchToProps = { setCurrentUser };
+const mapDispatchToProps = { dispatchUpdateCurrentUser };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreenC);

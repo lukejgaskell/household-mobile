@@ -21,7 +21,15 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gaskellsolutions.household"
+      "bundleIdentifier": "com.gaskellsolutions.household",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "677980014088-j7qtkh9m8dtcn28o9phspdokgsvclep3.apps.googleusercontent.com"
+        },
+        "facebookSignIn": {
+          "reservedClientId": "504887410396386"
+        }
+      }
     }
   }
 }

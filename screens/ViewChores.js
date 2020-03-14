@@ -7,7 +7,7 @@ import ChoresImage from '../assets/images/chores-icon.svg';
 import Colors from '../constants/Colors';
 import ImagePage from '../components/ImagePage';
 import NavOptions from '../constants/NavOptions';
-import { addChores } from '../state/redux';
+import { addChores } from '../state/chores/redux';
 import { connect } from 'react-redux';
 
 const suggestedChores = [
@@ -46,9 +46,7 @@ function ViewChoresC({ navigation, addChores }) {
 
   function selectChore(chore) {
     if (selectedChores.filter((sc) => sc.key === chore.key).length > 0) {
-      setSelectedChores([
-        ...selectedChores.filter((sc) => sc.key !== chore.key)
-      ]);
+      setSelectedChores([...selectedChores.filter((sc) => sc.key !== chore.key)]);
     } else {
       setSelectedChores([...selectedChores, chore]);
     }
@@ -61,9 +59,7 @@ function ViewChoresC({ navigation, addChores }) {
         <ChoreCard
           key={index}
           chore={chore}
-          isSelected={
-            selectedChores.filter((sc) => sc.key === chore.key).length > 0
-          }
+          isSelected={selectedChores.filter((sc) => sc.key === chore.key).length > 0}
           onPress={() => selectChore(chore)}
         />
       );

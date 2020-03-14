@@ -6,11 +6,11 @@ import { Ionicons } from '@expo/vector-icons';
 import NavOptions from '../constants/NavOptions';
 import Page from '../components/Page';
 import React from 'react';
-import { addChores } from '../state/redux';
 import { connect } from 'react-redux';
+import { dispatchAddChore } from '../state/chores/redux';
 import { isMaxChores } from '../utilities/chores';
 
-function EditChoresC({ navigation, chores }) {
+function EditChoresC({ navigation, chores, dispatchAddChore }) {
   function getChores() {
     let items = [];
     chores.forEach((chore, index) => {
@@ -82,7 +82,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-  addChores
+  dispatchAddChore
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditChoresC);

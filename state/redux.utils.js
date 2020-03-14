@@ -1,5 +1,3 @@
-import { combineReducers } from "redux";
-
 export function createActionTypes(filename, typeObj) {
   for (const prop in typeObj) {
     if (typeObj.hasOwnProperty(prop)) {
@@ -10,7 +8,7 @@ export function createActionTypes(filename, typeObj) {
 }
 
 export function createAction(type) {
-  return payload => {
+  return (payload) => {
     return {
       type,
       payload

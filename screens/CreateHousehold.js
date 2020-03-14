@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { addMembers, setHouseholdName } from '../state/redux';
 
 import Colors from '../constants/Colors';
 // @ts-ignore
@@ -15,30 +14,17 @@ import DismissKeyboardView from '../components/DismissKeyboardView';
 import ImagePage from '../components/ImagePage';
 import NavOptions from '../constants/NavOptions';
 import { connect } from 'react-redux';
+import { dispatchCreateHousehold } from '../state/household/redux';
 
-function CreateHouseholdC({
-  navigation,
-  setHouseholdName,
-  householdName,
-  addMembers,
-  members,
-  currentUser
-}) {
+function CreateHouseholdC({ navigation, dispatchCreateHousehold }) {
   const [showError, setShowError] = useState(false);
+  const [householdName, setHouseholdName] = useState('');
 
-  function submit() {
+  async function submit() {
     if (householdName.length < 1) {
       setShowError(true);
     } else {
-      if (members.filter((m) => m.id === currentUser.id).length === 0) {
-        addMembers({
-          name: currentUser.name,
-          email: currentUser.email,
-          id: currentUser.id,
-          initials: currentUser.initials,
-          status: currentUser.status
-        });
-      }
+      await dispatchCreateHousehold(householdName);
       navigation.navigate(NavOptions.ViewChores);
       setShowError(false);
     }
@@ -152,13 +138,12 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  const { householdName, currentUser, members } = state;
-  return { householdName, currentUser, members };
+  const { householdName } = state;
+  return { householdName };
 }
 
 const mapDispatchToProps = {
-  setHouseholdName,
-  addMembers
+  dispatchCreateHousehold
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateHouseholdC);

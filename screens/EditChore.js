@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import {
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
-import { addChores, deleteChores, updateChores } from '../state/redux';
 
 //@ts-ignore
 import ChoresImage from '../assets/images/chores-icon.svg';
 import Colors from '../constants/Colors';
-import DismissKeyboardView from '../components/DismissKeyboardView';
 import ImagePage from '../components/ImagePage';
 import NavOptions from '../constants/NavOptions';
 import { connect } from 'react-redux';
 import { isMaxChores } from '../utilities/chores';
+import { updateChores } from '../state/chores/redux';
 
 function EditChoreC({
   navigation,
