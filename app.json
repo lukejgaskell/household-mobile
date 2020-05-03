@@ -25,9 +25,6 @@
       "config": {
         "googleSignIn": {
           "reservedClientId": "677980014088-j7qtkh9m8dtcn28o9phspdokgsvclep3.apps.googleusercontent.com"
-        },
-        "facebookSignIn": {
-          "reservedClientId": "504887410396386"
         }
       }
     }
